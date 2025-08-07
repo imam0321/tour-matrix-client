@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -15,28 +14,51 @@ import {
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 
-export default function LoginForm({
+export default function RegisterForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
   const form = useForm();
 
-  const onsubmit = (data: any) => {
+  const onsubmit = (data) => {
     console.log(data);
   };
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+    <div className={cn("flex flex-col gap-4 md:mt-4", className)} {...props}>
       <Card className="overflow-hidden p-0">
         <CardContent className="grid p-0 md:grid-cols-2">
+          <div className="bg-muted relative hidden md:block">
+            <img
+              src={LoginCover}
+              alt="Image"
+              className="absolute inset-0 h-full w-full"
+            />
+          </div>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onsubmit)} className="p-6 md:p-8">
-              <div className="flex flex-col gap-6">
+              <div className="flex flex-col gap-4">
                 <div className="flex flex-col items-center text-center">
-                  <h1 className="text-2xl font-bold">Login to your account</h1>
+                  <h1 className="text-2xl font-bold">Registration</h1>
                 </div>
 
-                <div className="grid gap-3">
+                <div className="grid gap-1">
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Name</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter your Name" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="grid gap-1">
                   <FormField
                     control={form.control}
                     name="email"
@@ -52,21 +74,13 @@ export default function LoginForm({
                   />
                 </div>
 
-                <div className="grid gap-3">
+                <div className="grid gap-1">
                   <FormField
                     control={form.control}
                     name="password"
                     render={({ field }) => (
                       <FormItem>
-                        <div className="flex items-center">
-                          <FormLabel>Password</FormLabel>
-                          <Link
-                            to="/forget-password"
-                            className="ml-auto text-sm underline-offset-2 hover:underline"
-                          >
-                            Forgot your password?
-                          </Link>
-                        </div>
+                        <FormLabel>Password</FormLabel>
                         <FormControl>
                           <Input placeholder="Enter your Password" {...field} />
                         </FormControl>
@@ -75,9 +89,24 @@ export default function LoginForm({
                     )}
                   />
                 </div>
+                <div className="grid gap-1">
+                  <FormField
+                    control={form.control}
+                    name="confirm-password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Confirm Password</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter your Confirm Password" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
                 <Button type="submit" className="w-full">
-                  Login
+                  Register
                 </Button>
 
                 <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
@@ -85,7 +114,6 @@ export default function LoginForm({
                     Or continue with
                   </span>
                 </div>
-
                 <Button variant="outline" type="button" className="w-full">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                     <path
@@ -93,25 +121,17 @@ export default function LoginForm({
                       fill="currentColor"
                     />
                   </svg>
-                  <span>Login with Google</span>
+                  <span>Register with Google</span>
                 </Button>
-
                 <div className="text-center text-sm">
-                  Don&apos;t have an account?{" "}
-                  <Link to="/register" className="underline underline-offset-4">
-                    Register
+                  Do you have an account?{" "}
+                  <Link to="/login" className="underline underline-offset-4">
+                    Login
                   </Link>
                 </div>
               </div>
             </form>
           </Form>
-          <div className="bg-muted relative hidden md:block">
-            <img
-              src={LoginCover}
-              alt="Image"
-              className="absolute inset-0 h-full w-full"
-            />
-          </div>
         </CardContent>
       </Card>
     </div>
