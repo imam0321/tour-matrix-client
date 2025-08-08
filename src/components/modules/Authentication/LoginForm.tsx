@@ -17,6 +17,8 @@ import { useForm } from "react-hook-form";
 import Password from "@/components/ui/Password";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useLoginMutation } from "@/redux/features/auth/auth.api";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   email: z.email(),
@@ -27,6 +29,7 @@ export default function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const [login] = useLoginMutation();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -35,8 +38,14 @@ export default function LoginForm({
     },
   });
 
-  const onsubmit = (data: z.infer<typeof formSchema>) => {
-    console.log(data);
+  const onsubmit = async (data: z.infer<typeof formSchema>) => {
+    try {
+      const result = await login(data).unwrap();
+      console.log(result);
+      toast.success("User login successfully");
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -58,7 +67,11 @@ export default function LoginForm({
                       <FormItem>
                         <FormLabel>Email</FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter your Email" {...field} required/>
+                          <Input
+                            placeholder="Enter your Email"
+                            {...field}
+                            required
+                          />
                         </FormControl>
                         <FormDescription className="sr-only">
                           This is your Email

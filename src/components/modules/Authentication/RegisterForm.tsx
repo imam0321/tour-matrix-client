@@ -17,6 +17,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Password from "@/components/ui/Password";
+import { useRegisterMutation } from "@/redux/features/auth/auth.api";
+import { toast } from "sonner";
 
 const formSchema = z
   .object({
@@ -50,6 +52,7 @@ export default function RegisterForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const [register] = useRegisterMutation();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -60,8 +63,23 @@ export default function RegisterForm({
     },
   });
 
-  const onsubmit = (data: z.infer<typeof formSchema>) => {
-    console.log(data);
+  const onsubmit = async (data: z.infer<typeof formSchema>) => {
+    try {
+      const userInfo = {
+        name: data.name,
+        email: data.email,
+        password: data.password,
+      };
+
+      const result = await register(userInfo).unwrap();
+      console.log(result);
+      
+      toast.success("User created successfully");
+
+      console.log(data);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
