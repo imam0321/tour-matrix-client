@@ -2,25 +2,65 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import LoginCover from "../../../assets/images/login-cover.jpg";
+import LoginCover from "@/assets/images/register-cover.avif";
 import { Link } from "react-router";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Password from "@/components/ui/Password";
+
+const formSchema = z
+  .object({
+    name: z
+      .string({ error: "Name must be string" })
+      .min(2, { error: "Name to short. Minimum 2 character long" })
+      .max(50, { error: "Name to long" }),
+    email: z.email(),
+    password: z
+      .string({ error: "Password must be string" })
+      .min(8, { error: "Password must be at least 8 characters long." }),
+    // .regex(/^(?=.*[A-Z])/, {
+    //   message: "Password must contain at least 1 uppercase letter.",
+    // })
+    // .regex(/^(?=.*[!@#$%^&*])/, {
+    //   message: "Password must contain at least 1 special character.",
+    // })
+    // .regex(/^(?=.*\d)/, {
+    //   message: "Password must contain at least 1 number.",
+    // }),
+    confirmPassword: z
+      .string({ error: "Password must be string" })
+      .min(8, { error: "Password must be at least 8 characters long." }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
 
 export default function RegisterForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const form = useForm();
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+  });
 
-  const onsubmit = (data) => {
+  const onsubmit = (data: z.infer<typeof formSchema>) => {
     console.log(data);
   };
 
@@ -50,8 +90,16 @@ export default function RegisterForm({
                       <FormItem>
                         <FormLabel>Name</FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter your Name" {...field} />
+                          <Input
+                            type="text"
+                            placeholder="Enter your Name"
+                            {...field}
+                            required
+                          />
                         </FormControl>
+                        <FormDescription className="sr-only">
+                          This is your Name
+                        </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -66,8 +114,16 @@ export default function RegisterForm({
                       <FormItem>
                         <FormLabel>Email</FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter your Email" {...field} />
+                          <Input
+                            type="email"
+                            placeholder="Enter your Email"
+                            {...field}
+                            required
+                          />
                         </FormControl>
+                        <FormDescription className="sr-only">
+                          This is your Email
+                        </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -82,8 +138,11 @@ export default function RegisterForm({
                       <FormItem>
                         <FormLabel>Password</FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter your Password" {...field} />
+                          <Password {...field} />
                         </FormControl>
+                        <FormDescription className="sr-only">
+                          This is your Password
+                        </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -92,13 +151,16 @@ export default function RegisterForm({
                 <div className="grid gap-1">
                   <FormField
                     control={form.control}
-                    name="confirm-password"
+                    name="confirmPassword"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Confirm Password</FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter your Confirm Password" {...field} />
+                          <Password {...field} />
                         </FormControl>
+                        <FormDescription className="sr-only">
+                          This is your Confirm Password
+                        </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}

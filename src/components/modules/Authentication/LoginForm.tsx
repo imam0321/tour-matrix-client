@@ -3,25 +3,40 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import LoginCover from "../../../assets/images/login-cover.jpg";
+import LoginCover from "@/assets/images/login-cover.jpg";
 import { Link } from "react-router";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
+import Password from "@/components/ui/Password";
+import z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const formSchema = z.object({
+  email: z.email(),
+  password: z.string(),
+});
 
 export default function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const form = useForm();
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
 
-  const onsubmit = (data: any) => {
+  const onsubmit = (data: z.infer<typeof formSchema>) => {
     console.log(data);
   };
 
@@ -44,8 +59,11 @@ export default function LoginForm({
                       <FormItem>
                         <FormLabel>Email</FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter your Email" {...field} />
+                          <Input placeholder="Enter your Email" {...field} required/>
                         </FormControl>
+                        <FormDescription className="sr-only">
+                          This is your Email
+                        </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -68,8 +86,11 @@ export default function LoginForm({
                           </Link>
                         </div>
                         <FormControl>
-                          <Input placeholder="Enter your Password" {...field} />
+                          <Password {...field} />
                         </FormControl>
+                        <FormDescription className="sr-only">
+                          This is your Password
+                        </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
