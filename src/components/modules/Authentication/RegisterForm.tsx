@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import LoginCover from "@/assets/images/register-cover.avif";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import {
   Form,
   FormControl,
@@ -53,6 +53,8 @@ export default function RegisterForm({
   ...props
 }: React.ComponentProps<"div">) {
   const [register] = useRegisterMutation();
+  const navigate = useNavigate();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -73,9 +75,9 @@ export default function RegisterForm({
 
       const result = await register(userInfo).unwrap();
       console.log(result);
-      
-      toast.success("User created successfully");
 
+      toast.success("User created successfully");
+      navigate("/verify", { state: userInfo.email });
       console.log(data);
     } catch (error) {
       console.error(error);

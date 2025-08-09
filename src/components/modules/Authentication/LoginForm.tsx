@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import LoginCover from "@/assets/images/login-cover.jpg";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import {
   Form,
   FormControl,
@@ -30,6 +30,8 @@ export default function LoginForm({
   ...props
 }: React.ComponentProps<"div">) {
   const [login] = useLoginMutation();
+  const navigate = useNavigate();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -45,6 +47,10 @@ export default function LoginForm({
       toast.success("User login successfully");
     } catch (error) {
       console.error(error);
+      if (error.status === 400) {
+        toast.error("You are not verified");
+        navigate("/verify", {state: data.email})
+      }
     }
   };
 
