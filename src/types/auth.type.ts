@@ -9,10 +9,6 @@ export interface ILogin {
   password: string;
 }
 
-export interface ISendOtp {
-  email: string;
-}
-
 export interface ILoginResponseData {
   accessToken: string;
   refreshToken: string;
@@ -53,4 +49,13 @@ export interface IRegisterResponse {
   auths: IAuthProvider;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface ISendOtp {
+  email: string;
+}
+
+export interface IVerifyOtp {
+  email: string;
+  otp: string;
 }

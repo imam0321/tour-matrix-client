@@ -45,11 +45,19 @@ export default function LoginForm({
       const result = await login(data).unwrap();
       console.log(result);
       toast.success("User login successfully");
+      // navigate("/");
     } catch (error) {
       console.error(error);
-      if (error.status === 400) {
+      if (error.data.message === "User Not Exist!") {
+        toast.error("Email Not Exist!");
+        throw new Error("Email Not Exist!");
+      }
+      if (error.data.message === "Invalid Password!") {
+        toast.error("Invalid Password!");
+      }
+      if (error.data.message === "User not Verified") {
         toast.error("You are not verified");
-        navigate("/verify", {state: data.email})
+        navigate("/verify", { state: data.email });
       }
     }
   };
