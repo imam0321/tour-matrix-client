@@ -1,29 +1,43 @@
-import Logo from "@/assets/icons/logo"
-import { Button } from "@/components/ui/button"
+import Logo from "@/assets/icons/Logo";
+import { Button } from "@/components/ui/button";
 import {
   NavigationMenu,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-} from "@/components/ui/navigation-menu"
+} from "@/components/ui/navigation-menu";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
+} from "@/components/ui/popover";
+import { ModeToggle } from "./mode.toggle";
+import { Link } from "react-router";
+import {
+  authApi,
+  useLogoutMutation,
+  useUserInfoQuery,
+} from "@/redux/features/auth/auth.api";
+import { useAppDispatch } from "@/redux/hook";
 
-// Navigation links array to be used in both desktop and mobile menus
 const navigationLinks = [
-  { href: "#", label: "Home", active: true },
-  { href: "#", label: "Features" },
-  { href: "#", label: "Pricing" },
-  { href: "#", label: "About" },
-]
+  { href: "/", label: "Home" },
+  { href: "/about", label: "About" },
+];
 
 export default function Navbar() {
+  const { data, isLoading } = useUserInfoQuery(undefined);
+  const [logout] = useLogoutMutation();
+  const dispatch = useAppDispatch();
+
+  const handleLogout = async () => {
+    await logout(undefined);
+    dispatch(authApi.util.resetApiState());
+  };
+
   return (
-    <header className="border-b px-4 md:px-6 bg-neutral-900">
-      <div className="flex h-16 items-center justify-between gap-4">
+    <header className="border-b px-4 md:px-6 dark:bg-neutral-900">
+      <div className="flex items-center justify-between gap-4 h-16">
         {/* Left side */}
         <div className="flex items-center gap-2">
           {/* Mobile menu trigger */}
@@ -66,12 +80,8 @@ export default function Navbar() {
                 <NavigationMenuList className="flex-col items-start gap-0 md:gap-2">
                   {navigationLinks.map((link, index) => (
                     <NavigationMenuItem key={index} className="w-full">
-                      <NavigationMenuLink
-                        href={link.href}
-                        className="py-1.5"
-                        active={link.active}
-                      >
-                        {link.label}
+                      <NavigationMenuLink asChild className="py-1.5">
+                        <Link to={link.href}>{link.label}</Link>
                       </NavigationMenuLink>
                     </NavigationMenuItem>
                   ))}
@@ -80,21 +90,27 @@ export default function Navbar() {
             </PopoverContent>
           </Popover>
           {/* Main nav */}
-          <div className="flex items-center gap-6">
-            <a href="#" className="text-primary hover:text-primary/90">
+          <div className="flex items-center gap-4">
+            <Link
+              to="/"
+              className="flex items-center gap-1 text-primary hover:text-primary/90"
+            >
               <Logo />
-            </a>
+              <h1 className="font-bold lg:text-xl hidden md:inline-flex text-blue-400">
+                Tour<span className="text-primary ml-1">Matrix</span>
+              </h1>
+            </Link>
+
             {/* Navigation menu */}
-            <NavigationMenu className="max-md:hidden">
+            <NavigationMenu className="max-md:hidden mt-1">
               <NavigationMenuList className="gap-2">
                 {navigationLinks.map((link, index) => (
                   <NavigationMenuItem key={index}>
                     <NavigationMenuLink
-                      active={link.active}
-                      href={link.href}
-                      className="text-muted-foreground hover:text-primary py-1.5 font-medium"
+                      asChild
+                      className="text-muted-foreground hover:text-primary py-2 font-medium"
                     >
-                      {link.label}
+                      <Link to={link.href}>{link.label}</Link>
                     </NavigationMenuLink>
                   </NavigationMenuItem>
                 ))}
@@ -104,14 +120,22 @@ export default function Navbar() {
         </div>
         {/* Right side */}
         <div className="flex items-center gap-2">
-          <Button asChild variant="ghost" size="sm" className="text-sm">
-            <a href="#">Sign In</a>
-          </Button>
-          <Button asChild size="sm" className="text-sm">
-            <a href="#">Get Started</a>
-          </Button>
+          <ModeToggle />
+          {isLoading && (
+            <div className="w-5 h-5 border-2 border-gray-300 border-t-primary rounded-full animate-spin"></div>
+          )}
+          {!isLoading && data?.data?.email && (
+            <Button onClick={handleLogout} className="text-sm">
+              Logout
+            </Button>
+          )}
+          {!isLoading && !data?.data?.email && (
+            <Button asChild className="text-sm">
+              <Link to="/login">Login</Link>
+            </Button>
+          )}
         </div>
       </div>
     </header>
-  )
+  );
 }
