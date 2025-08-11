@@ -20,7 +20,7 @@ import { useUserInfoQuery } from "@/redux/features/auth/auth.api";
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { data: userData } = useUserInfoQuery(undefined);
   const data = {
-    navMain: getSidebarItems(userData?.data?.role),
+    navMain: getSidebarItems(userData?.role),
   };
 
   return (
@@ -31,7 +31,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           className="flex items-center gap-1 text-primary hover:text-primary/90"
         >
           <Logo />
-          <h1 className="font-bold lg:text-xl hidden md:inline-flex text-blue-400">
+          <h1 className="font-bold text-xl text-blue-400">
             Tour<span className="text-primary ml-1">Matrix</span>
           </h1>
         </Link>

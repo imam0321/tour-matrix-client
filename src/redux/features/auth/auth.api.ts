@@ -50,6 +50,7 @@ export const authApi = baseApi.injectEndpoints({
         url: "/user/me",
         method: "GET",
       }),
+      transformResponse: (res) => res.data,
     }),
   }),
 });
