@@ -73,12 +73,10 @@ export default function RegisterForm({
         password: data.password,
       };
 
-      const result = await register(userInfo).unwrap();
-      console.log(result);
+      await register(userInfo).unwrap();
 
       toast.success("User created successfully");
-      navigate("/verify", { state: userInfo.email });
-      console.log(data);
+      navigate("/login");
     } catch (error) {
       console.error(error);
     }

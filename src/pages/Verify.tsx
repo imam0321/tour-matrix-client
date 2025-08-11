@@ -46,7 +46,7 @@ export default function Verify() {
   const [confirmed, setConfirmed] = useState(false);
   const [sendOtp] = useSendOtpMutation();
   const [verifyOtp] = useVerifyOtpMutation();
-  const [timer, setTimer] = useState(10);
+  const [timer, setTimer] = useState(100);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -63,19 +63,18 @@ export default function Verify() {
       if (res.statusCode) {
         toast.success("OTP send successfully", { id: toastId });
         setConfirmed(true);
-        setTimer(10);
+        setTimer(100);
       }
     } catch (error) {
       toast.error(error);
     }
   };
 
-  //! Needed
-  // useEffect(() => {
-  //   if (!email) {
-  //     navigate("/");
-  //   }
-  // }, [email, navigate]);
+  useEffect(() => {
+    if (!email) {
+      navigate("/");
+    }
+  }, [email, navigate]);
 
   useEffect(() => {
     if (!email || !confirmed) {
