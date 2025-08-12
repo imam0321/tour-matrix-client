@@ -27,7 +27,7 @@ export default function ButtonModal({
 }: ModalProps) {
   return (
     <AlertDialog>
-      <AlertDialogTrigger>{actionName}</AlertDialogTrigger>
+      <AlertDialogTrigger asChild>{actionName}</AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>

@@ -12,17 +12,28 @@ import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useAddTourTypeMutation } from "@/redux/features/tour/tourType.api";
+import {
+  useAddTourTypeMutation,
+  useUpdateTourTypeMutation,
+} from "@/redux/features/tour/tourType.api";
 import { toast } from "sonner";
+import type { ITourTypeResponse } from "@/types";
+import { useEffect } from "react";
+
+interface TourTypeFormProps {
+  initialData: ITourTypeResponse | null;
+  onComplete?: () => void;
+}
 
 const formSchema = z.object({
   name: z
     .string({ error: "Name must be string" })
-    .min(2, { error: "Name to short. Minimum 2 character long" })
-    .max(50, { error: "Name to long" }),
 });
 
-export default function TourTypeForm() {
+export default function TourTypeForm({
+  initialData,
+  onComplete,
+}: TourTypeFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -31,12 +42,27 @@ export default function TourTypeForm() {
   });
 
   const [addTourType] = useAddTourTypeMutation();
+  const [updateTourType] = useUpdateTourTypeMutation();
+
+  useEffect(() => {
+    form.reset(initialData ? { name: initialData.name } : { name: "" });
+  }, [initialData, form]);
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
-      await addTourType({ name: data?.name }).unwrap();
-      toast.success("Tour type added successfully");
+      if (initialData) {
+        await updateTourType({
+          id: initialData?._id,
+          name: data?.name,
+        }).unwrap();
+        toast.success("Tour type updated successfully");
+      } else {
+        await addTourType({ name: data?.name }).unwrap();
+        toast.success("Tour type added successfully");
+      }
+
       form.reset();
+      onComplete?.();
     } catch (error: any) {
       toast.error(error.data.message);
     }
@@ -46,7 +72,7 @@ export default function TourTypeForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="flex justify-between items-center mt-4 mb-1 relative"
+        className="flex justify-between items-center mt-4 mb-2 relative"
       >
         <FormField
           control={form.control}
@@ -69,7 +95,7 @@ export default function TourTypeForm() {
           )}
         />
         <Button type="submit" className="absolute end-0">
-          Add Tour
+          {initialData ? "Update Tour Type" : "Add Tour Type"}
         </Button>
       </form>
     </Form>

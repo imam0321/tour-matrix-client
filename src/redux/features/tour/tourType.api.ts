@@ -12,6 +12,15 @@ export const tourTypeApi = baseApi.injectEndpoints({
       invalidatesTags: ["TOUR_TYPE"],
     }),
 
+    updateTourType: builder.mutation<IResponse<ITourTypeResponse>, { id: string; name: string }>({
+      query: ({ id, name}) => ({
+        url: `/tour/tour-types/${id}`,
+        method: "PATCH",
+        data: {name},
+      }),
+      invalidatesTags: ["TOUR_TYPE"],
+    }),
+
     getTourTypes: builder.query<
       IResponse<ITourTypeResponse[]>,
       { page: number; limit: number }
@@ -33,4 +42,9 @@ export const tourTypeApi = baseApi.injectEndpoints({
   }),
 });
 
-export const { useAddTourTypeMutation, useGetTourTypesQuery, useDeleteTourTypeMutation } = tourTypeApi;
+export const {
+  useAddTourTypeMutation,
+  useGetTourTypesQuery,
+  useUpdateTourTypeMutation,
+  useDeleteTourTypeMutation
+} = tourTypeApi;

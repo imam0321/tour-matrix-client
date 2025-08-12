@@ -17,9 +17,12 @@ import type { ITourTypeResponse } from "@/types";
 import { useState } from "react";
 import TourTypeForm from "@/components/modules/Tours/TourTypeForm";
 import { toast } from "sonner";
-import Modal from "@/components/modules/Tours/ButtonModal";
+import ButtonModal from "@/components/modules/Tours/ButtonModal";
 
 export default function AddTourType() {
+  const [editTourType, setEditTourType] = useState<ITourTypeResponse | null>(
+    null
+  );
   const [page, setPage] = useState(1);
   const limit = 5;
 
@@ -40,7 +43,10 @@ export default function AddTourType() {
     <div className="w-full max-w-3xl mx-auto">
       <h1 className="text-2xl font-bold ">Tour Types</h1>
       <div>
-        <TourTypeForm />
+        <TourTypeForm
+          initialData={editTourType}
+          onComplete={() => setEditTourType(null)}
+        />
       </div>
       <div className="px-2 border border-muted rounded ">
         <Table>
@@ -70,11 +76,12 @@ export default function AddTourType() {
                       <TableCell className="flex justify-end items-center gap-2">
                         <Button
                           size="sm"
+                          onClick={() => setEditTourType(tourType)}
                           className="bg-muted text-muted-foreground"
                         >
                           <PenIcon />
                         </Button>
-                        <Modal
+                        <ButtonModal
                           actionName={
                             <Button size="sm">
                               <Trash2 />
@@ -84,7 +91,7 @@ export default function AddTourType() {
                           description="Are you sure delete this tour type?"
                           confirmHandler={handleTourTypeDelete}
                           id={tourType._id}
-                        ></Modal>
+                        ></ButtonModal>
                       </TableCell>
                     </TableRow>
                   ))}
