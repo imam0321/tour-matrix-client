@@ -1,4 +1,5 @@
 import type { ComponentType } from "react";
+import type { IMeta } from "./tour.type";
 
 export type {
   IRegisterResponse,
@@ -9,11 +10,14 @@ export type {
   IVerifyOtp,
 } from "./auth.type";
 
+export type { ITourType, ITourTypeResponse } from "./tour.type";
+
 export interface IResponse<T> {
   statusCode: number;
   success: boolean;
   message: string;
   data: T;
+  meta?: IMeta
 }
 
 export interface ISidebarItem {
