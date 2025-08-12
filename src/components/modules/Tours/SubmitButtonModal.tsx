@@ -9,22 +9,23 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import type React from "react";
 
-interface IButtonModalProps {
+interface ISubmitButtonModal {
   actionName: React.ReactNode;
   title: string;
   description: string;
-  confirmHandler: (id: string) => void;
-  id: string;
+  onConfirm: () => void;
+  confirmButtonTitle: string;
 }
 
-export default function ButtonModal({
+export default function SubmitButtonModal({
   actionName,
   title,
   description,
-  confirmHandler,
-  id,
-}: IButtonModalProps) {
+  onConfirm,
+  confirmButtonTitle,
+}: ISubmitButtonModal) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>{actionName}</AlertDialogTrigger>
@@ -35,8 +36,8 @@ export default function ButtonModal({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={() => confirmHandler(id)}>
-            Continue
+          <AlertDialogAction onClick={() => onConfirm()}>
+            {confirmButtonTitle}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
