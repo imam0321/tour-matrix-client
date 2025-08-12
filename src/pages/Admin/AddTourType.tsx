@@ -1,4 +1,8 @@
-import { useGetTourTypesQuery } from "@/redux/features/tour/tour.api";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import {
+  useDeleteTourTypeMutation,
+  useGetTourTypesQuery,
+} from "@/redux/features/tour/tourType.api";
 import {
   Table,
   TableBody,
@@ -9,58 +13,34 @@ import {
 } from "@/components/ui/table";
 import { PenIcon, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { useForm } from "react-hook-form";
 import type { ITourTypeResponse } from "@/types";
 import { useState } from "react";
+import TourTypeForm from "@/components/modules/Tours/TourTypeForm";
+import { toast } from "sonner";
+import Modal from "@/components/modules/Tours/ButtonModal";
 
 export default function AddTourType() {
-  const form = useForm();
   const [page, setPage] = useState(1);
   const limit = 5;
 
   const { data, isLoading } = useGetTourTypesQuery({ page, limit });
-  console.log(data);
+  const [deleteTourType] = useDeleteTourTypeMutation();
+
+  const handleTourTypeDelete = async (id: string) => {
+    try {
+      await deleteTourType(id);
+
+      toast.success("Tour Type Delete successfully");
+    } catch (error: any) {
+      toast.error(error.data.message);
+    }
+  };
 
   return (
     <div className="w-full max-w-3xl mx-auto">
       <h1 className="text-2xl font-bold ">Tour Types</h1>
       <div>
-        <Form {...form}>
-          <form className="flex justify-between items-center mt-4 mb-1 relative">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem className="w-full">
-                  <FormControl>
-                    <Input
-                      type="text"
-                      placeholder="Enter a tour type name"
-                      {...field}
-                      required
-                    />
-                  </FormControl>
-                  <FormDescription className="sr-only">
-                    This is your tour type Name
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button type="submit" className="absolute end-0">
-              Add Tour
-            </Button>
-          </form>
-        </Form>
+        <TourTypeForm />
       </div>
       <div className="px-2 border border-muted rounded ">
         <Table>
@@ -94,9 +74,17 @@ export default function AddTourType() {
                         >
                           <PenIcon />
                         </Button>
-                        <Button size="sm">
-                          <Trash2 />
-                        </Button>
+                        <Modal
+                          actionName={
+                            <Button size="sm">
+                              <Trash2 />
+                            </Button>
+                          }
+                          title="Delete Tour Type"
+                          description="Are you sure delete this tour type?"
+                          confirmHandler={handleTourTypeDelete}
+                          id={tourType._id}
+                        ></Modal>
                       </TableCell>
                     </TableRow>
                   ))}

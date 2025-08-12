@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -77,8 +78,8 @@ export default function RegisterForm({
 
       toast.success("User created successfully");
       navigate("/login");
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      toast.error(error.data.message);
     }
   };
 
