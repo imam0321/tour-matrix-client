@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -46,7 +47,7 @@ export default function LoginForm({
       await login(data).unwrap();
       toast.success("User login successfully");
       navigate("/");
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
       if (error.data.message === "User Not Exist!") {
         toast.error("Email Not Exist!");
