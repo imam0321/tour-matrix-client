@@ -19,7 +19,7 @@ import {
 import { toast } from "sonner";
 import type { ITourTypeResponse } from "@/types";
 import { useEffect } from "react";
-import SubmitButtonModal from "./SubmitButtonModal";
+import SubmitButtonModal from "../../Buttons/SubmitButtonModal";
 
 interface TourTypeFormProps {
   initialData: ITourTypeResponse | null;
