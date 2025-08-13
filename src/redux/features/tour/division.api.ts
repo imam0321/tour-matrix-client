@@ -1,15 +1,15 @@
 import { baseApi } from "@/redux/baseApi";
-import type { IDivisionResponse, IResponse, ITourType, ITourTypeResponse } from "@/types";
+import type { IDivisionResponse, IResponse} from "@/types";
 
 export const divisionApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    addTourType: builder.mutation<IResponse<ITourTypeResponse>, ITourType>({
-      query: (tourTypeName) => ({
-        url: "/tour/create-tour-type",
+    addDivision: builder.mutation<IResponse<IDivisionResponse>, FormData>({
+      query: (divisionData) => ({
+        url: "/division/create",
         method: "POST",
-        data: tourTypeName,
+        data: divisionData,
       }),
-      invalidatesTags: ["TOUR_TYPE"],
+      invalidatesTags: ["DIVISION"],
     }),
 
     getDivisions: builder.query<
@@ -26,5 +26,6 @@ export const divisionApi = baseApi.injectEndpoints({
 });
 
 export const {
+  useAddDivisionMutation,
   useGetDivisionsQuery
 } = divisionApi;

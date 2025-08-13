@@ -12,7 +12,6 @@ export default function AddDivision() {
   const limit = 5;
 
   const { data, isLoading } = useGetDivisionsQuery({ page, limit });
-  console.log(data);
 
   const handleDivisionDelete = (id: string) => {
     console.log(id);
