@@ -12,9 +12,9 @@ import {
 import { Button } from "@/components/ui/button";
 import type { ITourTypeResponse } from "@/types";
 import { useState } from "react";
-import TourTypeForm from "@/components/modules/Tours/TourTypes/TourTypeForm";
+import TourTypeForm from "@/components/modules/Admin/TourTypes/TourTypeForm";
 import { toast } from "sonner";
-import AllTourTypes from "@/components/modules/Tours/TourTypes/AllTourTypes";
+import AllTourTypes from "@/components/modules/Admin/TourTypes/AllTourTypes";
 
 export default function AddTourType() {
   const [editTourType, setEditTourType] = useState<ITourTypeResponse | null>(
