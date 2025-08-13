@@ -1,22 +1,22 @@
+import type { IDivisionResponse } from "@/types";
 import { Button } from "@/components/ui/button";
 import { TableBody, TableCell, TableRow } from "@/components/ui/table";
-import type { ITourTypeResponse } from "@/types";
 import { PenIcon, Trash2 } from "lucide-react";
 import ButtonModal from "../../Buttons/ButtonModal";
 
-interface ITourTypeProps {
+interface IDivisionProps {
   isLoading: boolean;
-  tourTypes?: ITourTypeResponse[];
-  onEditTourType: (tourType: ITourTypeResponse) => void;
-  onTourTypeDelete: (id: string) => void;
+  divisions?: IDivisionResponse[];
+  onEditDivision: (division: IDivisionResponse) => void;
+  onDivisionDelete: (id: string) => void;
 }
 
-export default function AllTourTypes({
+export default function Division({
   isLoading,
-  tourTypes,
-  onEditTourType,
-  onTourTypeDelete,
-}: ITourTypeProps) {
+  divisions,
+  onEditDivision,
+  onDivisionDelete,
+}: IDivisionProps) {
   return (
     <TableBody>
       {isLoading ? (
@@ -29,15 +29,26 @@ export default function AllTourTypes({
         </TableRow>
       ) : (
         <>
-          {!isLoading &&
-            tourTypes?.map((tourType: ITourTypeResponse) => (
-              <TableRow key={tourType._id}>
-                <TableCell className="font-medium">{tourType?.name}</TableCell>
+          {
+            divisions?.map((division: IDivisionResponse) => (
+              <TableRow key={division._id}>
+                <TableCell>
+                  <img
+                    src={division.thumbnail || "Division"}
+                    alt="DV"
+                    className="w-12 h-12 object-cover rounded border"
+                  />
+                </TableCell>
+                <TableCell>{division?.name}</TableCell>
+                <TableCell>{division?.slug}</TableCell>
+                <TableCell className="whitespace-normal ">
+                  {division?.description}
+                </TableCell>
                 <TableCell>
                   <div className="flex justify-end items-center gap-2">
                     <Button
                       size="sm"
-                      onClick={() => onEditTourType(tourType)}
+                      onClick={() => onEditDivision(division)}
                       className="bg-muted text-muted-foreground"
                     >
                       <PenIcon />
@@ -50,8 +61,8 @@ export default function AllTourTypes({
                       }
                       title="Delete Tour Type"
                       description="Are you sure delete this tour type?"
-                      confirmHandler={onTourTypeDelete}
-                      id={tourType._id}
+                      confirmHandler={onDivisionDelete}
+                      id={division._id}
                     ></ButtonModal>
                   </div>
                 </TableCell>

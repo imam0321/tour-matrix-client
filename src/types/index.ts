@@ -10,7 +10,7 @@ export type {
   IVerifyOtp,
 } from "./auth.type";
 
-export type { ITourType, ITourTypeResponse } from "./tour.type";
+export type { ITourType, ITourTypeResponse, IDivision, IDivisionResponse } from "./tour.type";
 
 export interface IResponse<T> {
   statusCode: number;
