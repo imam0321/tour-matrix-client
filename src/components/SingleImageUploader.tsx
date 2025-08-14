@@ -4,7 +4,7 @@ import { useFileUpload } from "@/hooks/use-file-upload"
 import { useEffect } from "react";
 
 
-export default function SingleImageUploader({ onChange }) {
+export default function SingleImageUploader({ onChange, preview }) {
   const maxSizeMB = 5;
   const maxSize = maxSizeMB * 1024 * 1024; // 5MB default
 
@@ -32,7 +32,7 @@ export default function SingleImageUploader({ onChange }) {
     }
   }, [files, onChange]);
 
-  const previewUrl = files[0]?.preview || null;
+  const previewUrl = files[0]?.preview || preview || null;
 
   return (
     <div className="flex flex-col gap-2">

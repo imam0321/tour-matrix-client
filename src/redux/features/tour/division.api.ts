@@ -12,6 +12,15 @@ export const divisionApi = baseApi.injectEndpoints({
       invalidatesTags: ["DIVISION"],
     }),
 
+    updateDivision: builder.mutation<IResponse<IDivisionResponse>, { id: string; formData: FormData }>({
+      query: ({ id, formData }) => ({
+        url: `/division/${id}`,
+        method: "PATCH",
+        data: formData,
+      }),
+      invalidatesTags: ["DIVISION"],
+    }),
+
     getDivisions: builder.query<
       IResponse<IDivisionResponse[]>,
       { page: number; limit: number }
@@ -22,10 +31,20 @@ export const divisionApi = baseApi.injectEndpoints({
       }),
       providesTags: ["DIVISION"],
     }),
+
+    deleteDivision: builder.mutation<IResponse<null>, string>({
+      query: (id) => ({
+        url: `/division/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["DIVISION"],
+    })
   }),
 });
 
 export const {
   useAddDivisionMutation,
-  useGetDivisionsQuery
+  useUpdateDivisionMutation,
+  useGetDivisionsQuery,
+  useDeleteDivisionMutation
 } = divisionApi;

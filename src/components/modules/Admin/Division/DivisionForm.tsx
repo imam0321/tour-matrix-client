@@ -26,19 +26,38 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 import SingleImageUploader from "@/components/SingleImageUploader";
-import { useState } from "react";
-import { useAddDivisionMutation } from "@/redux/features/tour/division.api";
+import { useEffect, useState } from "react";
+import {
+  useAddDivisionMutation,
+  useUpdateDivisionMutation,
+} from "@/redux/features/tour/division.api";
 import { toast } from "sonner";
+import type { IDivisionResponse } from "@/types";
+
+interface IDivisionProps {
+  initialData: IDivisionResponse | null;
+  open: boolean;
+  setOpen: (open: boolean) => void;
+  onComplete: () => void;
+}
 
 const formSchema = z.object({
-  name: z.string(),
+  name: z.string().min(2, "Division name is required"),
   description: z.string().optional(),
 });
 
-export default function DivisionForm() {
-  const [open, setOpen] = useState(false);
+export default function DivisionForm({
+  initialData,
+  open,
+  setOpen,
+  onComplete,
+}: IDivisionProps) {
   const [image, setImage] = useState<File | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+
   const [addDivision] = useAddDivisionMutation();
+  const [updateDivision] = useUpdateDivisionMutation();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -48,8 +67,31 @@ export default function DivisionForm() {
     },
   });
 
+  useEffect(() => {
+    if (initialData) {
+      form.reset({
+        name: initialData.name,
+        description: initialData.description,
+      });
+      if (initialData.thumbnail) {
+        setPreviewImage(initialData.thumbnail || null);
+      }
+    } else {
+      form.reset({ name: "", description: "" });
+      setPreviewImage(null);
+    }
+    setImage(null);
+  }, [form, initialData]);
+
+  const handleAddDivision = () => {
+    onComplete();
+    setOpen(true);
+  };
+
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    const toastId = toast.loading("Division Uploading....");
+    const toastId = toast.loading(
+      initialData ? "Updating division..." : "Uploading division..."
+    );
     const formData = new FormData();
 
     formData.append("name", data.name);
@@ -57,9 +99,16 @@ export default function DivisionForm() {
     if (image) formData.append("file", image);
 
     try {
-      await addDivision(formData).unwrap();
-      toast.success("Division uploaded successfully", { id: toastId });
+      if (initialData) {
+        await updateDivision({ id: initialData._id, formData }).unwrap();
+        toast.success("Division updated successfully", { id: toastId });
+      } else {
+        await addDivision(formData).unwrap();
+        toast.success("Division uploaded successfully", { id: toastId });
+      }
+
       setOpen(false);
+      onComplete();
     } catch (error: any) {
       toast.error(error.data.message, { id: toastId });
     }
@@ -68,16 +117,20 @@ export default function DivisionForm() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>Add Division</Button>
+        <Button onClick={handleAddDivision}>Add Division</Button>
       </DialogTrigger>
       <DialogContent
         onInteractOutside={(e) => e.preventDefault()}
         className="sm:max-w-[425px]"
       >
         <DialogHeader>
-          <DialogTitle>Add Division</DialogTitle>
+          <DialogTitle>
+            {initialData ? "Edit Division" : "Add Division"}
+          </DialogTitle>
           <DialogDescription>
-            Fill out the form below to add a new division.
+            {initialData
+              ? "Update the details for this division."
+              : "Fill out the form below to add a new division."}
           </DialogDescription>
         </DialogHeader>
 
@@ -105,7 +158,10 @@ export default function DivisionForm() {
             />
 
             {/* thumbnail */}
-            <SingleImageUploader onChange={setImage} />
+            <SingleImageUploader
+              onChange={setImage}
+              preview={initialData?.thumbnail || null}
+            />
 
             {/* Description */}
             <FormField
@@ -131,7 +187,7 @@ export default function DivisionForm() {
             <Button variant="outline">Cancel</Button>
           </DialogClose>
           <Button type="submit" form="add-division">
-            Upload
+            {initialData ? "Update" : "Upload"}
           </Button>
         </DialogFooter>
       </DialogContent>
