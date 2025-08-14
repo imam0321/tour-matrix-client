@@ -19,6 +19,7 @@ import {
 import { toast } from "sonner";
 import type { ITourTypeResponse } from "@/types";
 import { useEffect } from "react";
+import SubmitButtonModal from "../../Buttons/SubmitButtonModal";
 
 interface TourTypeFormProps {
   initialData: ITourTypeResponse | null;
@@ -26,8 +27,7 @@ interface TourTypeFormProps {
 }
 
 const formSchema = z.object({
-  name: z
-    .string({ error: "Name must be string" })
+  name: z.string({ error: "Name must be string" }),
 });
 
 export default function TourTypeForm({
@@ -68,6 +68,10 @@ export default function TourTypeForm({
     }
   };
 
+  const handleConfirm = () => {
+    form.handleSubmit(onSubmit)();
+  };
+
   return (
     <Form {...form}>
       <form
@@ -90,13 +94,27 @@ export default function TourTypeForm({
               <FormDescription className="sr-only">
                 This is your tour type Name
               </FormDescription>
-              <FormMessage />
+              <FormMessage className="absolute text-red-600 top-full left-0 mt-1" />
             </FormItem>
           )}
         />
-        <Button type="submit" className="absolute end-0">
-          {initialData ? "Update Tour Type" : "Add Tour Type"}
-        </Button>
+        <SubmitButtonModal
+          actionName={
+            <Button className="absolute end-0">
+              {initialData ? "Update Tour Type" : "Add Tour Type"}
+            </Button>
+          }
+          title={initialData ? "Update Tour Type" : "Add Tour Type"}
+          description={
+            initialData
+              ? `Are you sure Update "${form.watch("name")}" this tour type?`
+              : `Are you sure Add "${form.watch("name")}" this tour type?`
+          }
+          onConfirm={handleConfirm}
+          confirmButtonTitle={
+            initialData ? "Update Tour Type" : "Add Tour Type"
+          }
+        />
       </form>
     </Form>
   );
