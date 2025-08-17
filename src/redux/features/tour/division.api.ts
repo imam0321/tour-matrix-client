@@ -23,11 +23,12 @@ export const divisionApi = baseApi.injectEndpoints({
 
     getDivisions: builder.query<
       IResponse<IDivisionResponse[]>,
-      { page: number; limit: number }
+      unknown
     >({
-      query: ({ page, limit }) => ({
-        url: `/division?page=${page}&limit=${limit}`,
+      query: (params) => ({
+        url: `/division`,
         method: "GET",
+        params
       }),
       providesTags: ["DIVISION"],
     }),

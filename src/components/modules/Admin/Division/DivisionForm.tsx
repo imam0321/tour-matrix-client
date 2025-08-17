@@ -53,8 +53,7 @@ export default function DivisionForm({
   onComplete,
 }: IDivisionProps) {
   const [image, setImage] = useState<File | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [, setPreviewImage] = useState<string | null>(null);
 
   const [addDivision] = useAddDivisionMutation();
   const [updateDivision] = useUpdateDivisionMutation();
