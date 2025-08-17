@@ -23,11 +23,12 @@ export const tourTypeApi = baseApi.injectEndpoints({
 
     getTourTypes: builder.query<
       IResponse<ITourTypeResponse[]>,
-      { page: number; limit: number }
+      unknown
     >({
-      query: ({ page, limit }) => ({
-        url: `/tour/tour-types?page=${page}&limit=${limit}`,
+      query: (params) => ({
+        url: `/tour/tour-types`,
         method: "GET",
+        params
       }),
       providesTags: ["TOUR_TYPE"],
     }),

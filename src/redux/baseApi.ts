@@ -8,6 +8,6 @@ export const baseApi = createApi({
   //   baseUrl: "http://localhost:3000",
   //   credentials: "include",
   // }),
-  tagTypes: ["USER", "TOUR_TYPE", "DIVISION"],
+  tagTypes: ["USER", "TOUR_TYPE", "DIVISION", "TOUR"],
   endpoints: () => ({}),
 });

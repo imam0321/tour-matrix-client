@@ -1,43 +1,108 @@
-import SingleImageUploader from "@/components/SingleImageUploader";
+import MultipleImageUploader from "@/components/MultipleImageUploader";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import z from "zod";
-
-// const formSchema = z.object({
-//   name: z.string().min(2, "Division name is required"),
-//   description: z.string().optional(),
-// });
+import type { FileMetadata } from "@/hooks/use-file-upload";
+import { cn } from "@/lib/utils";
+import { useGetDivisionsQuery } from "@/redux/features/tour/division.api";
+import { useAddTourMutation } from "@/redux/features/tour/tour.api";
+import { useGetTourTypesQuery } from "@/redux/features/tour/tourType.api";
+import { format, formatISO } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+import { useState } from "react";
+import { useForm, type FieldValues, type SubmitHandler } from "react-hook-form";
+import { toast } from "sonner";
 
 export default function AddTour() {
+  const [startOpen, setStartOpen] = useState(false);
+  const [endOpen, setEndOpen] = useState(false);
+  const [images, setImages] = useState<(File | FileMetadata)[] | []>([]);
+
+  const [addTour] = useAddTourMutation();
+
+  const { data: divisions, isLoading: divisionLoading } = useGetDivisionsQuery({
+    limit: 50,
+    fields: "_id, name",
+  });
+  const { data: tourTypes, isLoading: tourTypeLoading } = useGetTourTypesQuery({
+    limit: 50,
+    fields: "_id, name",
+  });
+
+  const divisionOptions = divisions?.data.map(
+    (item: { _id: string; name: string }) => ({
+      value: item._id,
+      label: item.name,
+    })
+  );
+
+  const tourTypeOptions = tourTypes?.data.map(
+    (item: { _id: string; name: string }) => ({
+      value: item._id,
+      label: item.name,
+    })
+  );
+
   const form = useForm({
-    // resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
+      division: "",
+      tourType: "",
+      startDate: "",
+      endDate: "",
       location: "",
       description: "",
-      costFrom: "",
+      costFrom: 0,
     },
   });
 
-  const onSubmit = async (data) => {
-    console.log(data);
+  const startDate = form.watch("startDate");
+
+  const onSubmit: SubmitHandler<FieldValues> = async (data) => {
+    const formData = new FormData();
+    const tourData = {
+      ...data,
+      startDate: formatISO(data.startDate),
+      endDate: formatISO(data.endDate),
+      costFrom: Number(data.costFrom)
+    };
+
+    formData.append("data", JSON.stringify(tourData));
+    images.forEach((image) => formData.append("files", image as File));
+
+    try {
+      const res = await addTour(formData).unwrap();
+      toast.success("Tour create successfully")
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
-    <div className="w-full max-w-3xl mx-auto py-10">
+    <div className="w-full max-w-2xl mx-auto py-10">
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl font-bold">Add New Tour</CardTitle>
@@ -47,7 +112,7 @@ export default function AddTour() {
             <form
               id="add-tour"
               onSubmit={form.handleSubmit(onSubmit)}
-              className="space-y-6"
+              className="space-y-4"
             >
               {/* Title & Location */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -60,9 +125,6 @@ export default function AddTour() {
                       <FormControl>
                         <Input placeholder="Enter tour title" {...field} />
                       </FormControl>
-                      <FormDescription className="sr-only">
-                        Title of the tour (required)
-                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -77,9 +139,168 @@ export default function AddTour() {
                       <FormControl>
                         <Input placeholder="Enter tour location" {...field} />
                       </FormControl>
-                      <FormDescription className="sr-only">
-                        Location of the tour (required)
-                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="division"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Division</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                        disabled={divisionLoading}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select a division" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent className="w-full">
+                          {divisionOptions?.map(
+                            (item: { value: string; label: string }) => (
+                              <SelectItem value={item.value}>
+                                {item.label}
+                              </SelectItem>
+                            )
+                          )}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="tourType"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Tour Type</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                        disabled={tourTypeLoading}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select a tour type" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent className="w-full">
+                          {tourTypeOptions?.map(
+                            (item: { value: string; label: string }) => (
+                              <SelectItem value={item.value}>
+                                {item.label}
+                              </SelectItem>
+                            )
+                          )}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="startDate"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                      <FormLabel>Start Date</FormLabel>
+                      <Popover open={startOpen} onOpenChange={setStartOpen}>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant={"outline"}
+                              className={cn(
+                                "w-full pl-3 text-left font-normal",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              {field.value ? (
+                                format(field.value, "PP")
+                              ) : (
+                                <span>Pick a start date</span>
+                              )}
+                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={new Date(field.value)}
+                            onSelect={(date) => {
+                              field.onChange(date);
+                              setStartOpen(false);
+                            }}
+                            disabled={(date) =>
+                              date <
+                              new Date(
+                                new Date().setDate(new Date().getDate() - 1)
+                              )
+                            }
+                            captionLayout="dropdown"
+                          />
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="endDate"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                      <FormLabel>End Date</FormLabel>
+                      <Popover open={endOpen} onOpenChange={setEndOpen}>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant={"outline"}
+                              className={cn(
+                                "w-full pl-3 text-left font-normal",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              {field.value ? (
+                                format(field.value, "PP")
+                              ) : (
+                                <span>Pick a end date</span>
+                              )}
+                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={new Date(field.value)}
+                            onSelect={(date) => {
+                              field.onChange(date);
+                              setEndOpen(false);
+                            }}
+                            disabled={(date) =>
+                              startDate
+                                ? date < new Date(startDate)
+                                : date <
+                                  new Date(
+                                    new Date().setDate(new Date().getDate() - 1)
+                                  )
+                            }
+                            captionLayout="dropdown"
+                          />
+                        </PopoverContent>
+                      </Popover>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -100,9 +321,6 @@ export default function AddTour() {
                         {...field}
                       />
                     </FormControl>
-                    <FormDescription className="sr-only">
-                      Minimum cost of the tour
-                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -123,23 +341,17 @@ export default function AddTour() {
                           {...field}
                         />
                       </FormControl>
-                      <FormDescription className="sr-only">
-                        Brief description about the tour
-                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
 
                 {/* Image Uploader */}
-                <div className="w-full">
+                <div>
                   <FormItem className="w-full">
-                  <FormLabel>Tour Image</FormLabel>
-                  <SingleImageUploader
-                    onChange={(file) => console.log("Image selected:", file)}
-                    preview={null}
-                    />
-                    </FormItem>
+                    <FormLabel>Tour Image</FormLabel>
+                    <MultipleImageUploader onChange={setImages} />
+                  </FormItem>
                 </div>
               </div>
 
