@@ -7,7 +7,7 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Link } from "react-router";
-import AboutCover from "../assets/images/aboutCover.PNG";
+import AboutCover from "@/assets/images/aboutCover.png";
 
 export default function About() {
   return (
