@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import MultipleImageUploader from "@/components/MultipleImageUploader";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -30,14 +31,20 @@ import { useGetDivisionsQuery } from "@/redux/features/tour/division.api";
 import { useAddTourMutation } from "@/redux/features/tour/tour.api";
 import { useGetTourTypesQuery } from "@/redux/features/tour/tourType.api";
 import { format, formatISO } from "date-fns";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
-import { useForm, type FieldValues, type SubmitHandler } from "react-hook-form";
+import {
+  useFieldArray,
+  useForm,
+  type FieldValues,
+  type SubmitHandler,
+} from "react-hook-form";
 import { toast } from "sonner";
 
 export default function AddTour() {
   const [startOpen, setStartOpen] = useState(false);
   const [endOpen, setEndOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [images, setImages] = useState<(File | FileMetadata)[] | []>([]);
 
   const [addTour] = useAddTourMutation();
@@ -70,39 +77,91 @@ export default function AddTour() {
       title: "",
       division: "",
       tourType: "",
+      minAge: 0,
+      maxGest: 0,
       startDate: "",
       endDate: "",
       location: "",
       description: "",
       costFrom: 0,
+      included: [{ value: "" }],
+      excluded: [{ value: "" }],
+      amenities: [{ value: "" }],
+      tourPlan: [{ value: "" }],
     },
+  });
+
+  const {
+    fields: includedFields,
+    append: includedAppend,
+    remove: includedRemove,
+  } = useFieldArray({
+    control: form.control,
+    name: "included",
+  });
+
+  const {
+    fields: excludedFields,
+    append: excludedAppend,
+    remove: excludedRemove,
+  } = useFieldArray({
+    control: form.control,
+    name: "excluded",
+  });
+
+  const {
+    fields: amenitiesFields,
+    append: amenitiesAppend,
+    remove: amenitiesRemove,
+  } = useFieldArray({
+    control: form.control,
+    name: "amenities",
+  });
+
+  const {
+    fields: tourPlanFields,
+    append: tourPlanAppend,
+    remove: tourPlanRemove,
+  } = useFieldArray({
+    control: form.control,
+    name: "tourPlan",
   });
 
   const startDate = form.watch("startDate");
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
+    setLoading(true);
     const formData = new FormData();
     const tourData = {
       ...data,
       startDate: formatISO(data.startDate),
       endDate: formatISO(data.endDate),
-      costFrom: Number(data.costFrom)
+      costFrom: Number(data.costFrom),
+      minAge: Number(data.minAge),
+      maxGest: Number(data.maxGest),
+      included: data.included.map((item: { value: string }) => item.value),
+      excluded: data.excluded.map((item: { value: string }) => item.value),
+      amenities: data.amenities.map((item: { value: string }) => item.value),
+      tourPlan: data.tourPlan.map((item: { value: string }) => item.value),
     };
 
     formData.append("data", JSON.stringify(tourData));
     images.forEach((image) => formData.append("files", image as File));
-
+    const toastId = toast.loading("Tour uploading...");
     try {
       const res = await addTour(formData).unwrap();
-      toast.success("Tour create successfully")
+      toast.success("Tour create successfully", { id: toastId });
       console.log(res);
-    } catch (error) {
-      console.log(error);
+      setLoading(false);
+      form.reset();
+      setImages([]);
+    } catch (error: any) {
+      toast.error(error.data.message, { id: toastId });
     }
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto py-10">
+    <div className="w-full max-w-2xl mx-auto py-4">
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl font-bold">Add New Tour</CardTitle>
@@ -119,6 +178,7 @@ export default function AddTour() {
                 <FormField
                   control={form.control}
                   name="title"
+                  rules={{ required: "Tour Title is required" }}
                   render={({ field }) => (
                     <FormItem className="w-full">
                       <FormLabel>Tour Title</FormLabel>
@@ -133,6 +193,7 @@ export default function AddTour() {
                 <FormField
                   control={form.control}
                   name="location"
+                  rules={{ required: "Location is required" }}
                   render={({ field }) => (
                     <FormItem className="w-full">
                       <FormLabel>Location</FormLabel>
@@ -144,11 +205,12 @@ export default function AddTour() {
                   )}
                 />
               </div>
-
+              {/* Division & TourTypes */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="division"
+                  rules={{ required: "Please select a division" }}
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Division</FormLabel>
@@ -165,7 +227,7 @@ export default function AddTour() {
                         <SelectContent className="w-full">
                           {divisionOptions?.map(
                             (item: { value: string; label: string }) => (
-                              <SelectItem value={item.value}>
+                              <SelectItem key={item.value} value={item.value}>
                                 {item.label}
                               </SelectItem>
                             )
@@ -179,6 +241,7 @@ export default function AddTour() {
                 <FormField
                   control={form.control}
                   name="tourType"
+                  rules={{ required: "Please select a tour type" }}
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Tour Type</FormLabel>
@@ -195,7 +258,7 @@ export default function AddTour() {
                         <SelectContent className="w-full">
                           {tourTypeOptions?.map(
                             (item: { value: string; label: string }) => (
-                              <SelectItem value={item.value}>
+                              <SelectItem key={item.value} value={item.value}>
                                 {item.label}
                               </SelectItem>
                             )
@@ -207,11 +270,79 @@ export default function AddTour() {
                   )}
                 />
               </div>
+              {/* Cost & Max Gest & Min Age */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                <FormField
+                  control={form.control}
+                  name="costFrom"
+                  rules={{
+                    required: "Cost is required",
+                    min: { value: 0, message: "Cost cannot be negative" },
+                  }}
+                  render={({ field }) => (
+                    <FormItem className="w-full">
+                      <FormLabel>Cost</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          placeholder="Enter tour cost"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="minAge"
+                  rules={{
+                    required: "Minimum age is required",
+                    min: { value: 0, message: "Age cannot be negative" },
+                  }}
+                  render={({ field }) => (
+                    <FormItem className="w-full">
+                      <FormLabel>Minimum Age</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          placeholder="Enter minimum Age"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="maxGest"
+                  rules={{
+                    required: "Maximum guests is required",
+                    min: { value: 1, message: "Must be at least 1" },
+                  }}
+                  render={({ field }) => (
+                    <FormItem className="w-full">
+                      <FormLabel>Max Gest</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          placeholder="Enter max gest"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
+              {/* Date  */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="startDate"
+                  rules={{ required: "Start date is required" }}
                   render={({ field }) => (
                     <FormItem className="flex flex-col">
                       <FormLabel>Start Date</FormLabel>
@@ -259,6 +390,7 @@ export default function AddTour() {
                 <FormField
                   control={form.control}
                   name="endDate"
+                  rules={{ required: "End date is required" }}
                   render={({ field }) => (
                     <FormItem className="flex flex-col">
                       <FormLabel>End Date</FormLabel>
@@ -307,25 +439,6 @@ export default function AddTour() {
                 />
               </div>
 
-              {/* Cost */}
-              <FormField
-                control={form.control}
-                name="costFrom"
-                render={({ field }) => (
-                  <FormItem className="w-full">
-                    <FormLabel>Starting Cost</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        placeholder="Enter starting price"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
               {/* Description + Image */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
                 <FormField
@@ -355,9 +468,207 @@ export default function AddTour() {
                 </div>
               </div>
 
+              <div className="border border-gray-800" />
+              {/* included, excluded amenities, Tour Plan */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Included Section */}
+                <div className="p-2 rounded-2xl border shadow-sm">
+                  <div className="flex justify-between items-center mb-3">
+                    <h3 className="font-semibold text-lg">✅ Included</h3>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      onClick={() => includedAppend({ value: "" })}
+                    >
+                      <Plus className="w-4 h-4 mr-1" /> Add
+                    </Button>
+                  </div>
+
+                  <div className="space-y-2">
+                    {includedFields.map((item, index) => (
+                      <div
+                        key={item.id}
+                        className="flex items-center gap-2 rounded-lg p-1"
+                      >
+                        <FormField
+                          control={form.control}
+                          name={`included.${index}.value`}
+                          render={({ field }) => (
+                            <FormItem className="flex-1">
+                              <FormControl>
+                                <Input
+                                  placeholder="Enter included item"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <Button
+                          type="button"
+                          size="icon"
+                          variant="destructive"
+                          onClick={() => includedRemove(index)}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Excluded Section */}
+                <div className="p-2 rounded-2xl border shadow-sm">
+                  <div className="flex justify-between items-center mb-3">
+                    <h3 className="font-semibold text-lg">❌ Excluded</h3>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      onClick={() => excludedAppend({ value: "" })}
+                    >
+                      <Plus className="w-4 h-4 mr-1" /> Add
+                    </Button>
+                  </div>
+
+                  <div className="space-y-2">
+                    {excludedFields.map((item, index) => (
+                      <div
+                        key={item.id}
+                        className="flex items-center gap-2 rounded-lg p-1"
+                      >
+                        <FormField
+                          control={form.control}
+                          name={`excluded.${index}.value`}
+                          render={({ field }) => (
+                            <FormItem className="flex-1">
+                              <FormControl>
+                                <Input
+                                  placeholder="Enter excluded item"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <Button
+                          type="button"
+                          size="icon"
+                          variant="destructive"
+                          onClick={() => excludedRemove(index)}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Amenities Section */}
+                <div className="p-2 rounded-2xl border shadow-sm">
+                  <div className="flex justify-between items-center mb-3">
+                    <h3 className="font-semibold text-lg">✅ Amenities</h3>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      onClick={() => amenitiesAppend({ value: "" })}
+                    >
+                      <Plus className="w-4 h-4 mr-1" /> Add
+                    </Button>
+                  </div>
+
+                  <div className="space-y-2">
+                    {amenitiesFields.map((item, index) => (
+                      <div
+                        key={item.id}
+                        className="flex items-center gap-2 rounded-lg p-1"
+                      >
+                        <FormField
+                          control={form.control}
+                          name={`amenities.${index}.value`}
+                          render={({ field }) => (
+                            <FormItem className="flex-1">
+                              <FormControl>
+                                <Input
+                                  placeholder="Enter amenities item"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <Button
+                          type="button"
+                          size="icon"
+                          variant="destructive"
+                          onClick={() => amenitiesRemove(index)}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Tour Plan Section */}
+                <div className="p-2 rounded-2xl border shadow-sm">
+                  <div className="flex justify-between items-center mb-3">
+                    <h3 className="font-semibold text-lg">📝 Tour Plan</h3>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      onClick={() => tourPlanAppend({ value: "" })}
+                    >
+                      <Plus className="w-4 h-4 mr-1" /> Add
+                    </Button>
+                  </div>
+
+                  <div className="space-y-2">
+                    {tourPlanFields.map((item, index) => (
+                      <div
+                        key={item.id}
+                        className="flex items-center gap-2 rounded-lg p-1"
+                      >
+                        <FormField
+                          control={form.control}
+                          name={`tourPlan.${index}.value`}
+                          render={({ field }) => (
+                            <FormItem className="flex-1">
+                              <FormControl>
+                                <Input
+                                  placeholder="Enter tour Plan item"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <Button
+                          type="button"
+                          size="icon"
+                          variant="destructive"
+                          onClick={() => tourPlanRemove(index)}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
               {/* Submit */}
-              <Button type="submit" className="w-full">
-                Save Tour
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? "Uploading..." : "Upload Tour"}
               </Button>
             </form>
           </Form>
