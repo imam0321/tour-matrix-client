@@ -6,7 +6,7 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Star, Calendar, Users } from "lucide-react";
+import { Star, Calendar, Users, MapPin } from "lucide-react";
 import { Link } from "react-router";
 
 interface TourCardProps {
@@ -55,6 +55,8 @@ export default function TourCard({
 
       <CardContent className="px-3">
         <h3 className="font-semibold text-lg mb-2">{title}</h3>
+
+        <span className="text-sm text-gray-600"><MapPin className="w-4 h-4 inline" /> {location} → {location}</span>
 
         <div className="mb-1 text-muted-foreground">
           <div className="flex justify-between items-center">

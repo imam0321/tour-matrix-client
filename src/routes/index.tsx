@@ -16,6 +16,7 @@ import { withAuth } from "@/utils/withAuth";
 import { role } from "@/constants/role";
 import type { TRole } from "@/types/auth.type";
 import HomePage from "@/pages/HomePage";
+import ToursPage from "@/pages/ToursPage";
 
 export const router = createBrowserRouter([
   {
@@ -31,6 +32,10 @@ export const router = createBrowserRouter([
         Component: About,
         path: "/about",
       },
+      {
+        Component: ToursPage,
+        path: "/tours"
+      }
     ],
   },
   {
