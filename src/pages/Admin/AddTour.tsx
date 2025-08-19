@@ -78,7 +78,7 @@ export default function AddTour() {
       division: "",
       tourType: "",
       minAge: 0,
-      maxGest: 0,
+      maxGuest: 0,
       startDate: "",
       endDate: "",
       location: "",
@@ -138,7 +138,7 @@ export default function AddTour() {
       endDate: formatISO(data.endDate),
       costFrom: Number(data.costFrom),
       minAge: Number(data.minAge),
-      maxGest: Number(data.maxGest),
+      maxGuest: Number(data.maxGuest),
       included: data.included.map((item: { value: string }) => item.value),
       excluded: data.excluded.map((item: { value: string }) => item.value),
       amenities: data.amenities.map((item: { value: string }) => item.value),
@@ -316,7 +316,7 @@ export default function AddTour() {
                 />
                 <FormField
                   control={form.control}
-                  name="maxGest"
+                  name="maxGuest"
                   rules={{
                     required: "Maximum guests is required",
                     min: { value: 1, message: "Must be at least 1" },
@@ -667,7 +667,7 @@ export default function AddTour() {
               </div>
 
               {/* Submit */}
-              <Button type="submit" className="w-full" disabled={loading}>
+              <Button type="submit" className="w-full">
                 {loading ? "Uploading..." : "Upload Tour"}
               </Button>
             </form>

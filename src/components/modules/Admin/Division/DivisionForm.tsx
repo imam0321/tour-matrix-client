@@ -108,6 +108,7 @@ export default function DivisionForm({
 
       setOpen(false);
       onComplete();
+      form.reset({ name: "", description: "" })
     } catch (error: any) {
       toast.error(error.data.message, { id: toastId });
     }
