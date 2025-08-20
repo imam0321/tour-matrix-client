@@ -23,6 +23,7 @@ import { role } from "@/constants/role";
 
 const navigationLinks = [
   { href: "/", label: "Home", role: "PUBLIC" },
+  { href: "/tours", label: "Tours", role: "PUBLIC" },
   { href: "/about", label: "About", role: "PUBLIC" },
   { href: "/admin", label: "Dashboard", role: role.superAdmin},
   { href: "/admin", label: "Dashboard", role: role.admin},
@@ -40,7 +41,7 @@ export default function Navbar() {
   };
 
   return (
-    <header className="border-b px-4 md:px-6 dark:bg-neutral-900">
+    <header className="border-b px-4 md:px-6 sticky top-0 z-50 glass-effect">
       <div className="flex items-center justify-between gap-4 h-16">
         {/* Left side */}
         <div className="flex items-center gap-2">
@@ -111,8 +112,8 @@ export default function Navbar() {
               className="flex items-center gap-1 text-primary hover:text-primary/90"
             >
               <Logo />
-              <h1 className="font-bold lg:text-xl hidden md:inline-flex text-blue-400">
-                Tour<span className="text-primary ml-1">Matrix</span>
+              <h1 className="font-bold lg:text-xl hidden md:inline-flex">
+                <span className="text-[#1C97E3]">Tour</span><span className="text-[#ff2056] ml-1">Matrix</span>
               </h1>
             </Link>
 

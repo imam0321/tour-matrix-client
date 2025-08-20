@@ -8,7 +8,7 @@ import { Link } from "react-router";
 
 export default function Footer() {
   return (
-    <footer className="dark:bg-neutral-900 text-accent-foreground border border-sidebar-border border-t-2">
+    <footer className="text-accent-foreground border border-sidebar-border border-t-2">
       <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6 lg:px-8">
         <Link to="/">
           <div className="flex justify-center items-center gap-2">

@@ -15,15 +15,32 @@ import Unauthorized from "@/pages/Unauthorized";
 import { withAuth } from "@/utils/withAuth";
 import { role } from "@/constants/role";
 import type { TRole } from "@/types/auth.type";
+import HomePage from "@/pages/HomePage";
+import ToursPage from "@/pages/ToursPage";
+const TourDetailsPage = lazy(()=> import("@/pages/TourDetailsPage"))
+
 export const router = createBrowserRouter([
   {
     Component: App,
     path: "/",
     children: [
       {
+        Component: HomePage,
+        path: "/",
+        index: true
+      },
+      {
         Component: About,
         path: "/about",
       },
+      {
+        Component: ToursPage,
+        path: "/tours"
+      },
+      {
+        Component: TourDetailsPage,
+        path: "/tours/:id"
+      }
     ],
   },
   {

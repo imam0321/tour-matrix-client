@@ -7,7 +7,7 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Link } from "react-router";
-import AboutCover from "../assets/images/aboutCover.PNG";
+import AboutCover from "@/assets/images/aboutCover.png";
 
 export default function About() {
   return (
@@ -25,7 +25,12 @@ export default function About() {
               unforgettable experiences with ease. We connect travelers to
               authentic experiences worldwide.
             </p>
-            <Button size="lg" className="mt-4 shadow-lg hover:scale-105 transition-transform" asChild>
+            <Button
+              size="lg"
+              onClick={() => window.scrollTo(0, 0)}
+              className="mt-4 shadow-lg hover:scale-105 transition-transform"
+              asChild
+            >
               <Link to="/">Get Started</Link>
             </Button>
           </div>
@@ -34,7 +39,9 @@ export default function About() {
           <div className="flex justify-center">
             <Card className="shadow-xl rounded-2xl overflow-hidden w-full max-w-md border border-border/75 bg-card/80 backdrop-blur">
               <CardHeader className="pb-3">
-                <CardTitle className="text-lg font-semibold">Explore with Us</CardTitle>
+                <CardTitle className="text-lg font-semibold">
+                  Explore with Us
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <img
@@ -43,7 +50,8 @@ export default function About() {
                   className="w-full h-64 object-cover rounded-lg"
                 />
                 <CardDescription className="mt-4 text-sm text-muted-foreground">
-                  Discover exciting destinations and plan your perfect trip with Tour Matrix.
+                  Discover exciting destinations and plan your perfect trip with
+                  Tour Matrix.
                 </CardDescription>
               </CardContent>
             </Card>
