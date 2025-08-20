@@ -17,6 +17,7 @@ import { role } from "@/constants/role";
 import type { TRole } from "@/types/auth.type";
 import HomePage from "@/pages/HomePage";
 import ToursPage from "@/pages/ToursPage";
+const TourDetailsPage = lazy(()=> import("@/pages/TourDetailsPage"))
 
 export const router = createBrowserRouter([
   {
@@ -35,6 +36,10 @@ export const router = createBrowserRouter([
       {
         Component: ToursPage,
         path: "/tours"
+      },
+      {
+        Component: TourDetailsPage,
+        path: "/tours/:id"
       }
     ],
   },

@@ -11,7 +11,7 @@ import { Link } from "react-router";
 import type { ITourResponse } from "@/types";
 import { format, parseISO } from "date-fns";
 
-interface TourCardProps {
+export interface TourCardProps {
   tour: ITourResponse;
 }
 
@@ -64,8 +64,8 @@ export default function HomeTourCard({ tour }: TourCardProps) {
       </CardContent>
 
       <CardFooter className="px-3 pb-3 mt-auto">
-        <Button asChild className="w-full bg-primary/80">
-          <Link to={`/tour/${tour?._id}`}>View Details</Link>
+        <Button asChild className="w-full bg-primary/80" onClick={() => window.scrollTo(0, 0)}>
+          <Link to={`/tours/${tour?._id}`}>View Details</Link>
         </Button>
       </CardFooter>
     </Card>

@@ -5,7 +5,7 @@ import { useGetToursQuery } from "@/redux/features/tour/tour.api";
 import type { ITourResponse } from "@/types";
 
 export default function FeaturedTours() {
-  const { data, isLoading, isError } = useGetToursQuery({ page: 1, limit: 10 });
+  const { data, isLoading, isError } = useGetToursQuery({ page: 1, limit: 4 });
 
   if (isLoading) return <p>Loading tours...</p>;
   if (isError) return <p>Failed to load tours.</p>;
