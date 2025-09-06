@@ -70,7 +70,7 @@ export default function TourCard({ tour }: TourCardProps) {
           <Button
             asChild
             className="w-full"
-            onClick={() => window.scrollTo(0, 0)}
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           >
             <Link to={`/tours/${tour._id}`}>View Details</Link>
           </Button>

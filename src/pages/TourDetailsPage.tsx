@@ -9,8 +9,7 @@ const Overview = lazy(() => import("@/components/modules/TourDetails/Overview"))
 const Itinerary = lazy(() => import("@/components/modules/TourDetails/Itinerary"));
 const Excluded = lazy(() => import("@/components/modules/TourDetails/Excluded"));
 const Reviews = lazy(() => import("@/components/modules/TourDetails/Reviews"));
-import BookingSidebar from "@/components/modules/TourDetails/BookingSidebar";
-
+import BookSidebar from "@/components/modules/TourDetails/BookSidebar";
 
 export default function TourDetailsPage() {
   const { id } = useParams();
@@ -42,7 +41,7 @@ export default function TourDetailsPage() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Main Tabs */}
             <div className="lg:col-span-2">
-              <Tabs defaultValue="overview" className="space-y-6"> 
+              <Tabs defaultValue="overview" className="space-y-6">
                 <TabsList className="grid w-full grid-cols-4 rounded-md shadow shadow-blue-400/50">
                   <TabsTrigger value="overview">Overview</TabsTrigger>
                   <TabsTrigger value="itinerary">Itinerary</TabsTrigger>
@@ -63,7 +62,7 @@ export default function TourDetailsPage() {
             </div>
 
             {/* Booking Sidebar */}
-            <BookingSidebar
+            <BookSidebar
               id={tour._id as string}
               cost={tour.costFrom as number}
               minAge={tour.minAge as number}
