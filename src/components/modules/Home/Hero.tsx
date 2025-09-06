@@ -25,8 +25,12 @@ export default function Hero() {
           with our expertly curated travel experiences.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in">
-          <Button size="lg" className="border-0 px-8">
-            <Link to="/tours" className="flex items-center gap-2">
+          <Button size="lg" className="border-0 px-8 shadow-lg hover:scale-105 transition-transform" asChild>
+            <Link
+              to="/tours"
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+              className="flex items-center gap-2"
+            >
               Explore Tours <ArrowRight className="w-4 h-4" />
             </Link>
           </Button>

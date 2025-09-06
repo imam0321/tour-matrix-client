@@ -83,24 +83,25 @@ export default function Navbar() {
             <PopoverContent align="start" className="w-36 p-1 md:hidden">
               <NavigationMenu className="max-w-none *:w-full">
                 <NavigationMenuList className="flex-col items-start gap-0 md:gap-2">
-                  {navigationLinks.map((link) => (
-                    <>
-                      {link.role === "PUBLIC" && (
+                  {navigationLinks.map((link) => {
+                    if (link.role === "PUBLIC" || link.role === data?.role) {
+                      return (
                         <NavigationMenuItem key={link.href} className="w-full">
                           <NavigationMenuLink asChild className="py-1.5">
-                            <Link to={link.href}>{link.label}</Link>
+                            <Link
+                              to={link.href}
+                              onClick={() =>
+                                window.scrollTo({ top: 0, behavior: "smooth" })
+                              }
+                            >
+                              {link.label}
+                            </Link>
                           </NavigationMenuLink>
                         </NavigationMenuItem>
-                      )}
-                      {link.role === data?.role && (
-                        <NavigationMenuItem key={link.href} className="w-full">
-                          <NavigationMenuLink asChild className="py-1.5">
-                            <Link to={link.href}>{link.label}</Link>
-                          </NavigationMenuLink>
-                        </NavigationMenuItem>
-                      )}
-                    </>
-                  ))}
+                      );
+                    }
+                    return null;
+                  })}
                 </NavigationMenuList>
               </NavigationMenu>
             </PopoverContent>
@@ -113,37 +114,36 @@ export default function Navbar() {
             >
               <Logo />
               <h1 className="font-bold lg:text-xl hidden md:inline-flex">
-                <span className="text-[#1C97E3]">Tour</span><span className="text-[#ff2056] ml-1">Matrix</span>
+                <span className="text-[#1C97E3]">Tour</span>
+                <span className="text-[#ff2056] ml-1">Matrix</span>
               </h1>
             </Link>
 
             {/* Navigation menu */}
             <NavigationMenu className="max-md:hidden mt-1">
               <NavigationMenuList className="gap-2">
-                {navigationLinks.map((link) => (
-                  <>
-                    {link.role === "PUBLIC" && (
+                {navigationLinks.map((link) => {
+                  if (link.role === "PUBLIC" || link.role === data?.role) {
+                    return (
                       <NavigationMenuItem key={link.href}>
                         <NavigationMenuLink
                           asChild
                           className="text-muted-foreground hover:text-primary py-2 font-medium"
                         >
-                          <Link to={link.href}>{link.label}</Link>
+                          <Link
+                            to={link.href}
+                            onClick={() =>
+                              window.scrollTo({ top: 0, behavior: "smooth" })
+                            }
+                          >
+                            {link.label}
+                          </Link>
                         </NavigationMenuLink>
                       </NavigationMenuItem>
-                    )}
-                    {link.role === data?.role && (
-                      <NavigationMenuItem key={link.href}>
-                        <NavigationMenuLink
-                          asChild
-                          className="text-muted-foreground hover:text-primary py-2 font-medium"
-                        >
-                          <Link to={link.href}>{link.label}</Link>
-                        </NavigationMenuLink>
-                      </NavigationMenuItem>
-                    )}
-                  </>
-                ))}
+                    );
+                  }
+                  return null;
+                })}
               </NavigationMenuList>
             </NavigationMenu>
           </div>

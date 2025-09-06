@@ -43,9 +43,7 @@ export default function TourCard({ tour }: TourCardProps) {
           </p>
           <div className="flex items-center text-sm text-gray-500 mb-2">
             <MapPin className="w-4 h-4 inline mr-1" />
-            <p>
-              <p>Dhaka → {tour?.location}</p>
-            </p>
+            <p>Dhaka → {tour?.location}</p>
           </div>
           <div className="flex justify-between text-sm text-gray-600 mb-2">
             <div className="flex items-center">
@@ -69,7 +67,11 @@ export default function TourCard({ tour }: TourCardProps) {
         </CardContent>
 
         <CardFooter className="p-4 pt-0 mt-auto">
-          <Button asChild className="w-full" onClick={() => window.scrollTo(0, 0)}>
+          <Button
+            asChild
+            className="w-full"
+            onClick={() => window.scrollTo(0, 0)}
+          >
             <Link to={`/tours/${tour._id}`}>View Details</Link>
           </Button>
         </CardFooter>

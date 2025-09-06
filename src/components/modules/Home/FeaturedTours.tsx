@@ -35,7 +35,7 @@ export default function FeaturedTours() {
             variant="outline"
             size="lg"
             onClick={() => window.scrollTo(0, 0)}
-            className="shadow-blue-400"
+            className="shadow-blue-400 hover:scale-105 transition-transform"
           >
             <Link to="/tours">View All Tours</Link>
           </Button>
