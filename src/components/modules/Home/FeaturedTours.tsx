@@ -3,7 +3,7 @@ import { Link } from "react-router";
 import HomeTourCard from "../Tours/HomeTourCard";
 import { useGetToursQuery } from "@/redux/features/tour/tour.api";
 import type { ITourResponse } from "@/types";
-import HomeTourCardLoading from "./HomeTourCardLoading";
+import HomeTourCardLoading from "../Tours/ToursSkeleton/HomeTourCardLoading";
 
 export default function FeaturedTours() {
   const { data, isLoading } = useGetToursQuery({ page: 1, limit: 4 });

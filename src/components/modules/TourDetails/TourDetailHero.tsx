@@ -1,12 +1,14 @@
 import { MapPin, Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useEffect, useState } from "react";
+import { differenceInDays, parseISO } from "date-fns";
 
 interface ITourDetailHeroProps {
   images: string[];
   title: string;
   location: string;
-  days: number;
+  startDate: string;
+  endDate: string;
   maxGuest: number;
 }
 
@@ -14,7 +16,8 @@ export default function TourDetailHero({
   images,
   title,
   location,
-  days,
+  startDate,
+  endDate,
   maxGuest,
 }: ITourDetailHeroProps) {
   const [current, setCurrent] = useState(0);
@@ -43,8 +46,12 @@ export default function TourDetailHero({
     return () => clearInterval(interval);
   }, [direction, images.length]);
 
+  const start = parseISO(startDate as string);
+  const end = parseISO(endDate as string);
+  const days = differenceInDays(end, start) + 1;
+
   return (
-    <div className="relative h-60 overflow-hidden">
+    <div className="relative h-40 overflow-hidden">
       <div
         className="flex w-full h-full transition-transform duration-1000 ease-in-out"
         style={{ transform: `translateX(-${current * 100}%)` }}
