@@ -16,36 +16,36 @@ export default function BookingSidebarLoading() {
         <CardContent className="space-y-4">
           {/* Min Age & Max Guests */}
           <div className="flex justify-between text-sm sm:text-base pe-1">
-            <Skeleton className="h-4 w-24" />
-            <Skeleton className="h-4 w-28" />
+            <Skeleton className="h-4 w-24 bg-accent-foreground" />
+            <Skeleton className="h-4 w-28 bg-accent-foreground" />
           </div>
 
           {/* Guests Counter */}
-          <Skeleton className="h-12 w-full rounded-lg" />
+          <Skeleton className="h-12 w-full rounded-lg bg-accent-foreground" />
 
           <Separator />
 
           {/* Price Breakdown */}
           <div className="space-y-2 text-sm sm:text-base">
             <div className="flex justify-between">
-              <Skeleton className="h-4 w-28" />
-              <Skeleton className="h-4 w-16" />
+              <Skeleton className="h-4 w-28 bg-accent-foreground" />
+              <Skeleton className="h-4 w-16 bg-accent-foreground" />
             </div>
             <div className="flex justify-between">
-              <Skeleton className="h-4 w-20" />
-              <Skeleton className="h-4 w-10" />
+              <Skeleton className="h-4 w-20 bg-accent-foreground" />
+              <Skeleton className="h-4 w-10 bg-accent-foreground" />
             </div>
 
             <Separator />
 
             <div className="flex justify-between items-center">
-              <Skeleton className="h-5 w-16" />
-              <Skeleton className="h-6 w-24" />
+              <Skeleton className="h-5 w-16 bg-accent-foreground" />
+              <Skeleton className="h-6 w-24 bg-accent-foreground" />
             </div>
           </div>
 
           {/* Button */}
-          <Skeleton className="h-10 w-full rounded-md" />
+          <Skeleton className="h-10 w-full rounded-md bg-accent-foreground" />
         </CardContent>
       </Card>
     </div>

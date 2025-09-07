@@ -7,10 +7,6 @@ export const withAuth = (Component: ComponentType, requiredRole?: TRole) => {
   return function AuthWrapper() {
     const { data, isLoading } = useUserInfoQuery(undefined);
     const location = useLocation();
-
-    if (isLoading) {
-      return <div className="flex justify-center mt-20">Loading...</div>;
-    }
     
     if (!isLoading && !data?.email) {
       return <Navigate to="/login" state={{ from: location }} replace />;

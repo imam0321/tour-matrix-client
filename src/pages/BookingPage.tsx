@@ -2,8 +2,8 @@ import { useParams } from "react-router";
 import BookingSummary from "@/components/modules/Booking/BookingSummary";
 import { useGetToursQuery } from "@/redux/features/tour/tour.api";
 import BookingSidebar from "@/components/modules/Booking/BookingSidebar";
-import BookingSummaryLoading from "@/components/modules/Booking/BookingSummaryLoading";
-import BookingSidebarLoading from "@/components/modules/Booking/BookingSidebarLoading";
+import BookingSummaryLoading from "@/components/modules/Booking/BookingSkeleton/BookingSummaryLoading";
+import BookingSidebarLoading from "@/components/modules/Booking/BookingSkeleton/BookingSidebarLoading";
 
 export default function BookingPage() {
   const { id } = useParams();

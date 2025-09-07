@@ -3,12 +3,10 @@ import { Link } from "react-router";
 import HomeTourCard from "../Tours/HomeTourCard";
 import { useGetToursQuery } from "@/redux/features/tour/tour.api";
 import type { ITourResponse } from "@/types";
+import HomeTourCardLoading from "./HomeTourCardLoading";
 
 export default function FeaturedTours() {
-  const { data, isLoading, isError } = useGetToursQuery({ page: 1, limit: 4 });
-
-  if (isLoading) return <p>Loading tours...</p>;
-  if (isError) return <p>Failed to load tours.</p>;
+  const { data, isLoading } = useGetToursQuery({ page: 1, limit: 4 });
 
   return (
     <section className="my-16 min-h-screen">
@@ -24,6 +22,10 @@ export default function FeaturedTours() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8">
+          {isLoading &&
+            Array.from({ length: 4 }).map((_, i) => (
+              <HomeTourCardLoading key={i} />
+            ))}
           {data?.data?.map((tour: ITourResponse) => (
             <HomeTourCard key={tour._id} tour={tour} />
           ))}
