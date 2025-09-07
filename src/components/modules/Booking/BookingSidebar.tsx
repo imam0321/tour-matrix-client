@@ -1,8 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CalendarDays } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import { useCreateBookingMutation } from "@/redux/features/booking/booking";
+import { toast } from "sonner";
 
 interface IBookingSidebarProps {
   id: string;
@@ -18,6 +21,7 @@ export default function BookingSidebar({
   minAge,
 }: IBookingSidebarProps) {
   const [guestCount, setGuestCount] = useState(1);
+  const [createBooking, { isLoading }] = useCreateBookingMutation();
 
   const finalTotal = costFrom * guestCount;
 
@@ -33,8 +37,29 @@ export default function BookingSidebar({
     }
   };
 
-  const handleBooking = (tour: string) => {
-    console.log("Booking data:", { tour, guestCount });
+  const handleBooking = async (tour: string) => {
+    const bookingData = {
+      tour,
+      guestCount,
+    };
+
+    const toastId = toast.loading("Booking processing...");
+
+    try {
+      const res = await createBooking(bookingData).unwrap();
+      toast.dismiss(toastId);
+
+      if (res.success && res.data?.paymentUrl) {
+        toast.success("Booking successful! Redirecting to payment...");
+        window.location.href = res.data.paymentUrl;
+      } else {
+        toast.error("Booking failed. Please try again.");
+      }
+    } catch (error: any) {
+      toast.dismiss(toastId);
+      toast.error(error?.data?.message);
+      console.error(error);
+    }
   };
 
   return (
@@ -94,10 +119,11 @@ export default function BookingSidebar({
           </div>
 
           <Button
+            disabled={isLoading}
             onClick={() => handleBooking(id)}
-            className="w-full transition active:scale-95 hover:opacity-90"
+            className="w-full transition active:scale-95 hover:opacity-90 disabled:opacity-50"
           >
-            Book now
+            {isLoading ? "Processing..." : "Book now"}
           </Button>
         </CardContent>
       </Card>
