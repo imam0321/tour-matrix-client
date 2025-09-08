@@ -8,12 +8,26 @@ import { useGetToursQuery } from "@/redux/features/tour/tour.api";
 import type { ITourResponse } from "@/types";
 import PaginationData from "@/utils/PaginationData";
 import { useState } from "react";
+import { useSearchParams } from "react-router";
 
 export default function ToursPage() {
+  const [searchParams] = useSearchParams();
   const [page, setPage] = useState(1);
   const limit = 4;
 
-  const { data, isLoading } = useGetToursQuery({ page, limit });
+  const searchTerm = searchParams.get("searchTerm") || undefined;
+  const division = searchParams.get("division") || undefined;
+  const tourType = searchParams.get("tourType") || undefined;
+  const sort = searchParams.get("sort") || undefined;
+
+  const { data, isLoading, isFetching } = useGetToursQuery({
+    page,
+    limit,
+    division,
+    tourType,
+    searchTerm,
+    sort,
+  });
   const meta = data?.meta;
 
   return (
@@ -23,8 +37,8 @@ export default function ToursPage() {
       <div className="flex flex-col lg:flex-row gap-8 mt-8 mx-6 lg:mx-12 mb-16">
         {isLoading ? <FilterToursLoading /> : <FilterTours />}
 
-        <main className="flex-1 animate-fade-in grid grid-cols-1 gap-6">
-          {isLoading
+        <main className="flex-1 space-y-4">
+          {isLoading || isFetching
             ? Array.from({ length: 4 }).map((_, i) => (
                 <TourCardLoading key={i} />
               ))
