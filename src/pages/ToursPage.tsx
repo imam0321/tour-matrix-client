@@ -6,11 +6,15 @@ import HeroToursLoading from "@/components/modules/Tours/ToursSkeleton/HeroTours
 import TourCardLoading from "@/components/modules/Tours/ToursSkeleton/TourCardLoading";
 import { useGetToursQuery } from "@/redux/features/tour/tour.api";
 import type { ITourResponse } from "@/types";
+import PaginationData from "@/utils/PaginationData";
+import { useState } from "react";
 
 export default function ToursPage() {
-  const { data, isLoading, isError } = useGetToursQuery({ page: 1, limit: 4 });
+  const [page, setPage] = useState(1);
+  const limit = 4;
 
-  if (isError) return <p>Failed to load tours.</p>;
+  const { data, isLoading } = useGetToursQuery({ page, limit });
+  const meta = data?.meta;
 
   return (
     <div className="min-h-screen">
@@ -27,6 +31,13 @@ export default function ToursPage() {
             : data?.data.map((tour: ITourResponse) => (
                 <TourCard key={tour._id} tour={tour} />
               ))}
+          {!isLoading && meta && meta.totalPage > 1 && (
+            <PaginationData
+              currentPage={page}
+              totalPages={meta.totalPage}
+              onPageChange={(p) => setPage(p)}
+            />
+          )}
         </main>
       </div>
     </div>

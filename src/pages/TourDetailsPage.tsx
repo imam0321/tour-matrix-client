@@ -62,6 +62,8 @@ export default function TourDetailsPage() {
                       description={tour.description}
                       included={tour.included}
                       amenities={tour.amenities}
+                      tourType={tour.tourType.name}
+                      division={tour.division.name}
                     />
                   )
                 )}

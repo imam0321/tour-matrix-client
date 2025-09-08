@@ -41,18 +41,18 @@ export default function TourCard({ tour }: TourCardProps) {
           <p className="text-muted-foreground mb-3 line-clamp-2">
             {tour.description}
           </p>
-          <div className="flex items-center text-sm text-gray-500 mb-2">
+          <div className="flex items-center text-sm text-accent-foreground mb-2">
             <MapPin className="w-4 h-4 inline mr-1" />
             <p>Dhaka → {tour?.location}</p>
           </div>
-          <div className="flex justify-between text-sm text-gray-600 mb-2">
+          <div className="flex justify-between text-sm text-accent-foreground mb-4">
             <div className="flex items-center">
               <Calendar className="w-4 h-4 inline mr-1" />
               <p>
                 {format(tour?.startDate, "PP")} → {format(tour?.endDate, "PP")}
               </p>
             </div>
-            <div className="flex items-center">
+            <div className="flex items-center text-accent-foreground">
               <Clock className="w-4 h-4 inline mr-1" />
               <p>{days} days</p>
             </div>
