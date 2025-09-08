@@ -23,9 +23,12 @@ export interface IUser {
 }
 
 export interface Tour {
-  _id: string
-  title: string
-  costFrom: number
+  _id?: string
+  title?: string
+  costFrom?: number
+  startDate?: string
+  endDate?: string
+  location?: string
 }
 
 export interface Payment {
