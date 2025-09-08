@@ -4,20 +4,29 @@ interface IOverviewProps {
   description: string;
   included: string[];
   amenities: string[];
+  tourType: string;
+  division: string;
 }
 
 export default function Overview({
   description,
   included,
   amenities,
+  tourType,
+  division,
 }: IOverviewProps) {
   return (
     <TabsContent value="overview" className="space-y-6">
       <div>
         <h2 className="text-2xl font-bold mb-4">About This Tour</h2>
-        <p className="text-muted-foreground leading-relaxed mb-6">
+        <p className="text-muted-foreground leading-relaxed mb-2">
           {description}
         </p>
+
+        <div className="flex justify-between items-center font-bold mb-4">
+          <p>Tour Type: {tourType}</p>
+          <p>Division: {division}</p>
+        </div>
 
         <h3 className="text-xl font-semibold mb-3">Included</h3>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">

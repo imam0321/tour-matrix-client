@@ -2,7 +2,7 @@ import heroImage from "@/assets/images/hero.jpg";
 
 export default function HeroTours() {
   return (
-    <section className="relative h-40 md:h-40 flex items-center justify-center overflow-hidden">
+    <section className="relative h-40 flex items-center justify-center overflow-hidden">
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: `url(${heroImage})` }}

@@ -11,6 +11,7 @@ export type {
 } from "./auth.type";
 
 export type { ITourResponse, ITourType, ITourTypeResponse, IDivision, IDivisionResponse } from "./tour.type";
+export type { IBookingResponse } from './booking.type';
 
 export interface IResponse<T> {
   statusCode: number;

@@ -46,8 +46,14 @@ export interface ITourResponse {
   tourPlan: string[]
   minAge: number
   maxGuest: number
-  division: string
-  tourType: string
+  division: {
+    _id: string;
+    name: string
+  }
+  tourType: {
+    _id: string;
+    name: string
+  }
   createdAt: string
   updatedAt: string
   slug: string

@@ -18,6 +18,10 @@ import type { TRole } from "@/types/auth.type";
 import HomePage from "@/pages/HomePage";
 import ToursPage from "@/pages/ToursPage";
 const TourDetailsPage = lazy(()=> import("@/pages/TourDetailsPage"))
+const BookingPage = lazy(()=> import("@/pages/BookingPage"))
+const Success = lazy(()=> import("@/pages/Payment/Success"))
+const Fail = lazy(()=> import("@/pages/Payment/Fail"))
+const Cancel = lazy(()=> import("@/pages/Payment/Cancel"))
 
 export const router = createBrowserRouter([
   {
@@ -27,7 +31,7 @@ export const router = createBrowserRouter([
       {
         Component: HomePage,
         path: "/",
-        index: true
+        index: true,
       },
       {
         Component: About,
@@ -35,12 +39,28 @@ export const router = createBrowserRouter([
       },
       {
         Component: ToursPage,
-        path: "/tours"
+        path: "/tours",
       },
       {
         Component: TourDetailsPage,
-        path: "/tours/:id"
-      }
+        path: "/tours/:id",
+      },
+      {
+        Component: withAuth(BookingPage),
+        path: "/booking/:id",
+      },
+      {
+        Component: Success,
+        path: "/payment/success",
+      },
+      {
+        Component: Fail,
+        path: "/payment/fail",
+      },
+      {
+        Component: Cancel,
+        path: "/payment/cancel",
+      },
     ],
   },
   {

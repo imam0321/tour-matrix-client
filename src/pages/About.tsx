@@ -27,7 +27,7 @@ export default function About() {
             </p>
             <Button
               size="lg"
-              onClick={() => window.scrollTo(0, 0)}
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
               className="mt-4 shadow-lg hover:scale-105 transition-transform"
               asChild
             >

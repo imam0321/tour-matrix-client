@@ -14,7 +14,7 @@ interface BookingSidebarProps {
   location: string;
 }
 
-export default function BookingSidebar({
+export default function BookSidebar({
   id,
   cost,
   minAge,
@@ -83,7 +83,7 @@ export default function BookingSidebar({
 
           {/* Book Now Button */}
           <Button asChild className="w-full mt-4 border-0" size="lg">
-            <Link to={`/booking/${id}`}>Book Now</Link>
+            <Link to={`/booking/${id}`}>Book</Link>
           </Button>
         </CardContent>
       </Card>

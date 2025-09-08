@@ -6,7 +6,6 @@ interface ExcludedProps {
 }
 
 export default function Excluded({ excluded }: ExcludedProps) {
-  console.log(excluded)
   return (
     <TabsContent value="excluded" className="space-y-6">
       <h2 className="text-2xl font-bold mb-4">What's Excluded</h2>

@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import LoginCover from "@/assets/images/login-cover.jpg";
-import { Link, useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import {
   Form,
   FormControl,
@@ -18,9 +18,13 @@ import { useForm } from "react-hook-form";
 import Password from "@/components/ui/Password";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useLoginMutation } from "@/redux/features/auth/auth.api";
+import {
+  useLoginMutation,
+  useUserInfoQuery,
+} from "@/redux/features/auth/auth.api";
 import { toast } from "sonner";
 import config from "@/config";
+import { useState } from "react";
 
 const formSchema = z.object({
   email: z.email(),
@@ -32,7 +36,13 @@ export default function LoginForm({
   ...props
 }: React.ComponentProps<"div">) {
   const [login] = useLoginMutation();
+  const { refetch: refetchUser } = useUserInfoQuery(undefined);
+
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const [loading, setLoading] = useState(false);
+  const from = (location.state as { from?: Location })?.from?.pathname || "/";
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -43,31 +53,42 @@ export default function LoginForm({
   });
 
   const onsubmit = async (data: z.infer<typeof formSchema>) => {
+    if (loading) return;
+    setLoading(true);
+
+    const toastId = toast.loading("Logging in...");
+
     try {
       await login(data).unwrap();
-      toast.success("User login successfully");
-      navigate("/");
+      await refetchUser();
+      toast.success("User login successfully", { id: toastId });
+      navigate(from, { replace: true });
     } catch (error: any) {
-      console.error(error);
-      if (error.data.message === "User Not Exist!") {
-        toast.error("Email Not Exist!");
-        throw new Error("Email Not Exist!");
+      const message = error?.data?.message;
+
+      switch (message) {
+        case "User Not Exist!":
+          toast.error("Email Not Exist!", { id: toastId });
+          break;
+        case "Invalid Password!":
+          toast.error("Invalid Password!", { id: toastId });
+          break;
+        case "User not Verified":
+          toast.error("You are not verified", { id: toastId });
+          navigate("/verify", { state: data.email });
+          break;
+        default:
+          if (message && message.includes("authenticated through Google")) {
+            toast.error(
+              "If you log in with Google, set a password first to be able to log in later with email and password.",
+              { id: toastId }
+            );
+          } else {
+            toast.error(message || "Something went wrong!", { id: toastId });
+          }
       }
-      if (error.data.message === "Invalid Password!") {
-        toast.error("Invalid Password!");
-      }
-      if (
-        error.data.message ===
-        "You have authenticated through Google. So if you want to login with credentials, then at first login with google and set a password for your Gmail and then you can login with email and password."
-      ) {
-        toast.error(
-          "If you log in with Google, set a password first to be able to log in later with email and password."
-        );
-      }
-      if (error.data.message === "User not Verified") {
-        toast.error("You are not verified");
-        navigate("/verify", { state: data.email });
-      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -144,7 +165,9 @@ export default function LoginForm({
 
                 <Button
                   onClick={() =>
-                    (window.location.href = `${config.baseUrl}/auth/google`)
+                    (window.location.href = `${
+                      config.baseUrl
+                    }/auth/google?redirect=${encodeURIComponent(from)}`)
                   }
                   variant="outline"
                   type="button"
