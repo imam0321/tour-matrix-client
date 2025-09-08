@@ -9,10 +9,12 @@ import {
 } from "@/components/ui/select";
 import { useGetDivisionsQuery } from "@/redux/features/tour/division.api";
 import { useGetTourTypesQuery } from "@/redux/features/tour/tourType.api";
-import { Search } from "lucide-react";
+import { FilterIcon, Search, X } from "lucide-react";
+import { useState } from "react";
 import { useSearchParams } from "react-router";
 
 export default function FilterTours() {
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
 
   const search = searchParams.get("searchTerm") || undefined;
@@ -82,16 +84,46 @@ export default function FilterTours() {
   };
 
   return (
-    <section className="md:sticky md:top-24 lg:w-1/3 xl:w-1/4 bg-card rounded-2xl h-96 p-6 shadow-md border">
-      <div className="flex justify-between items-center mb-4">
+    <section className="md:sticky md:top-24 lg:w-1/3 xl:w-1/4 bg-card rounded-2xl md:h-96 p-6 shadow-md border">
+      <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold">Filter Tours</h2>
-        <Button variant="outline" size="sm" onClick={handleFilterClear}>
-          Clear Filter
-        </Button>
+        <div className="flex items-center gap-x-1">
+          <Button variant="outline" size="sm" onClick={handleFilterClear}>
+            Clear Filter
+          </Button>
+          {isFilterOpen ? (
+            <Button
+              variant="outline"
+              size="sm"
+              className="md:hidden p-2"
+              onClick={() => setIsFilterOpen(!isFilterOpen)}
+            >
+              <X className="w-5 h-5" />
+            </Button>
+          ) : (
+            <Button
+              variant="outline"
+              size="sm"
+              className="md:hidden p-2"
+              onClick={() => setIsFilterOpen(!isFilterOpen)}
+            >
+              <FilterIcon className="w-5 h-5" />
+            </Button>
+          )}
+        </div>
       </div>
-      <div className="space-y-5">
+
+      <div
+        className={`space-y-5 transition-all duration-300 ease-in-out
+          ${
+            isFilterOpen
+              ? "max-h-[2000px] opacity-100 "
+              : "max-h-0 opacity-0 overflow-hidden"
+          }
+          md:max-h-full md:opacity-100`}
+      >
         {/* Search */}
-        <div className="relative">
+        <div className="relative mt-4">
           <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search tours..."
