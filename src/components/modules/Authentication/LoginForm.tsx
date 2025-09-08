@@ -165,7 +165,9 @@ export default function LoginForm({
 
                 <Button
                   onClick={() =>
-                    (window.location.href = `${config.baseUrl}/auth/google`)
+                    (window.location.href = `${
+                      config.baseUrl
+                    }/auth/google?redirect=${encodeURIComponent(from)}`)
                   }
                   variant="outline"
                   type="button"

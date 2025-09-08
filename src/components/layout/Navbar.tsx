@@ -13,32 +13,21 @@ import {
 } from "@/components/ui/popover";
 import { ModeToggle } from "./mode.toggle";
 import { Link } from "react-router";
-import {
-  authApi,
-  useLogoutMutation,
-  useUserInfoQuery,
-} from "@/redux/features/auth/auth.api";
-import { useAppDispatch } from "@/redux/hook";
+import { useUserInfoQuery } from "@/redux/features/auth/auth.api";
 import { role } from "@/constants/role";
+import LogoutButton from "../modules/Buttons/LogoutButton";
 
 const navigationLinks = [
   { href: "/", label: "Home", role: "PUBLIC" },
   { href: "/tours", label: "Tours", role: "PUBLIC" },
   { href: "/about", label: "About", role: "PUBLIC" },
-  { href: "/admin", label: "Dashboard", role: role.superAdmin},
-  { href: "/admin", label: "Dashboard", role: role.admin},
+  { href: "/admin", label: "Dashboard", role: role.superAdmin },
+  { href: "/admin", label: "Dashboard", role: role.admin },
   { href: "/user", label: "Dashboard", role: role.user },
 ];
 
 export default function Navbar() {
   const { data, isLoading } = useUserInfoQuery(undefined);
-  const [logout] = useLogoutMutation();
-  const dispatch = useAppDispatch();
-
-  const handleLogout = async () => {
-    await logout(undefined);
-    dispatch(authApi.util.resetApiState());
-  };
 
   return (
     <header className="border-b px-4 md:px-6 sticky top-0 z-50 glass-effect">
@@ -154,13 +143,9 @@ export default function Navbar() {
           {isLoading && (
             <div className="w-5 h-5 border-2 border-gray-300 border-t-primary rounded-full animate-spin"></div>
           )}
-          {!isLoading && data?.email && (
-            <Button onClick={handleLogout} className="text-sm">
-              Logout
-            </Button>
-          )}
+          {!isLoading && data?.email && <LogoutButton />}
           {!isLoading && !data?.email && (
-            <Button asChild className="text-sm">
+            <Button asChild className="text-sm rounded-2xl">
               <Link to="/login">Login</Link>
             </Button>
           )}
