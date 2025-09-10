@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar, Clock, MapPin, Star, Users } from "lucide-react";
 import type { IBookingsProps } from "./BookingStats";
 import { differenceInDays, format } from "date-fns";
+import { Link } from "react-router";
 
 export default function PastBookings({ bookings, isLoading }: IBookingsProps) {
   const pastBookings = bookings.filter(
@@ -64,7 +65,7 @@ export default function PastBookings({ bookings, isLoading }: IBookingsProps) {
               <div className="flex justify-between items-center mt-3">
                 <span className="font-semibold">${booking.tour.costFrom}</span>
                 <Button size="sm" variant="outline">
-                  Write Review
+                  <Link to={`/tours/${booking.tour._id}`}>View Details</Link>
                 </Button>
               </div>
             </div>
