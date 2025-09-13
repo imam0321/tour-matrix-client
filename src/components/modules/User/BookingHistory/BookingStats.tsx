@@ -1,10 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar, DollarSign, MapPin, Star } from "lucide-react";
 import BookingStatsLoading from "./BookingHistorySkeleton/BookingStatsLoading";
-import type { IBooking } from "@/types";
+import type { IBookingData } from "@/types";
 
 export interface IBookingsProps {
-  bookings: IBooking[];
+  bookings: IBookingData[];
   isLoading: boolean;
 }
 
@@ -14,7 +14,7 @@ export default function BookingStats({ bookings, isLoading }: IBookingsProps) {
   ).length;
 
   const totalSpent = bookings.reduce(
-    (sum, booking) => sum + (booking.tour?.costFrom || 0),
+    (sum, booking) => sum + (booking.status == "COMPLETE" && booking.tour?.costFrom || 0),
     0
   );
 

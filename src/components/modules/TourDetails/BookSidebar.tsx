@@ -23,6 +23,8 @@ export default function BookSidebar({
   maxGuest,
   location,
 }: BookingSidebarProps) {
+  
+
   return (
     <div className="lg:col-span-1">
       <Card className="sticky top-24 shadow-lg">
