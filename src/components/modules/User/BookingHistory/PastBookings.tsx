@@ -4,6 +4,7 @@ import { Calendar, Clock, MapPin, Star, Users } from "lucide-react";
 import type { IBookingsProps } from "./BookingStats";
 import { differenceInDays, format } from "date-fns";
 import { Link } from "react-router";
+import UpcomingBookingsLoading from "./BookingHistorySkeleton/UpcomingBookingsLoading";
 
 export default function PastBookings({ bookings, isLoading }: IBookingsProps) {
   const pastBookings = bookings.filter(
@@ -11,9 +12,9 @@ export default function PastBookings({ bookings, isLoading }: IBookingsProps) {
   );
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <UpcomingBookingsLoading />;
   }
-
+  
   return (
     <Card>
       <CardHeader>

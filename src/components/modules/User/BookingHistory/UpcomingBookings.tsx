@@ -13,6 +13,7 @@ import {
   useLazyPaymentInvoiceQuery,
 } from "@/redux/features/payment/payment";
 import { useState } from "react";
+import UpcomingBookingsLoading from "./BookingHistorySkeleton/UpcomingBookingsLoading";
 
 export default function UpcomingBookings({
   bookings,
@@ -84,7 +85,7 @@ export default function UpcomingBookings({
   };
 
   if (isLoading) {
-    return <div>loading</div>;
+    return <UpcomingBookingsLoading/>;
   }
 
   return (
