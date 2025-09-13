@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { format, parseISO } from "date-fns";
+import { format, isBefore, parseISO } from "date-fns";
 import { Calendar, User, Users, Heart, Share2, MapPin } from "lucide-react";
 import { Link } from "react-router";
 
@@ -23,7 +23,8 @@ export default function BookSidebar({
   maxGuest,
   location,
 }: BookingSidebarProps) {
-  
+  const start = parseISO(startDate);
+  const isBookingClosed = isBefore(start, new Date());
 
   return (
     <div className="lg:col-span-1">
@@ -84,8 +85,21 @@ export default function BookSidebar({
           </div>
 
           {/* Book Now Button */}
-          <Button asChild className="w-full mt-4 border-0" size="lg">
-            <Link to={`/booking/${id}`}>Book</Link>
+          <Button
+            asChild
+            className={`w-full mt-4 border-0 ${
+              isBookingClosed
+                ? "bg-muted-foreground hover:bg-muted-foreground"
+                : ""
+            }`}
+            size="lg"
+            disabled={isBookingClosed}
+          >
+            {isBookingClosed ? (
+              <span>Booking not available</span>
+            ) : (
+              <Link to={`/booking/${id}`}>Book</Link>
+            )}
           </Button>
         </CardContent>
       </Card>
