@@ -49,7 +49,7 @@ export default function TourCard({ tour }: TourCardProps) {
             <div className="flex items-center">
               <Calendar className="w-4 h-4 inline mr-1" />
               <p>
-                {format(tour?.startDate, "PP")} → {format(tour?.endDate, "PP")}
+                {format(start, "PP")} → {format(end, "PP")}
               </p>
             </div>
             <div className="flex items-center text-accent-foreground">

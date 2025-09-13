@@ -11,7 +11,18 @@ export interface IBooking {
   guestCount: number
   createdAt: string
   updatedAt: string
-  payment: Payment
+  payment: Payment 
+}
+
+export interface IBookingData {
+  _id: string
+  user: IUser
+  tour: Tour
+  status: TBookingStatus
+  guestCount: number
+  createdAt: string
+  updatedAt: string
+  payment: string
 }
 
 export interface IUser {
@@ -23,9 +34,12 @@ export interface IUser {
 }
 
 export interface Tour {
-  _id: string
-  title: string
-  costFrom: number
+  _id?: string
+  title?: string
+  costFrom?: number
+  startDate?: string
+  endDate?: string
+  location?: string
 }
 
 export interface Payment {

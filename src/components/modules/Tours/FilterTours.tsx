@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -6,54 +7,177 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search } from "lucide-react";
+import { useGetDivisionsQuery } from "@/redux/features/tour/division.api";
+import { useGetTourTypesQuery } from "@/redux/features/tour/tourType.api";
+import { FilterIcon, Search, X } from "lucide-react";
+import { useState } from "react";
+import { useSearchParams } from "react-router";
 
 export default function FilterTours() {
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const search = searchParams.get("searchTerm") || undefined;
+  const selectDivision = searchParams.get("division") || undefined;
+  const selectTourType = searchParams.get("tourType") || undefined;
+  const selectSort = searchParams.get("sort") || undefined;
+
+  const { data: divisions, isLoading: divisionLoading } = useGetDivisionsQuery({
+    limit: 50,
+    fields: "_id, name",
+  });
+
+  const { data: tourTypes, isLoading: tourTypeLoading } = useGetTourTypesQuery({
+    limit: 50,
+    fields: "_id, name",
+  });
+
+  const divisionOptions = divisions?.data.map(
+    (item: { _id: string; name: string }) => ({
+      value: item._id,
+      label: item.name,
+    })
+  );
+
+  const tourTypeOptions = tourTypes?.data.map(
+    (item: { _id: string; name: string }) => ({
+      value: item._id,
+      label: item.name,
+    })
+  );
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const params = new URLSearchParams(searchParams);
+    if (e.target.value) {
+      params.set("searchTerm", e.target.value);
+    } else {
+      params.delete("searchTerm");
+    }
+    setSearchParams(params);
+  };
+
+  const handleDivisionChange = (value: string) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("division", value);
+    setSearchParams(params);
+  };
+
+  const handleTourTypeChange = (value: string) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("tourType", value);
+    setSearchParams(params);
+  };
+
+  const handleSortChange = (value: string) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("sort", value);
+    setSearchParams(params);
+  };
+
+  const handleFilterClear = () => {
+    const params = new URLSearchParams(searchParams);
+    params.delete("searchTerm");
+    params.delete("division");
+    params.delete("tourType");
+    params.delete("sort");
+    setSearchParams(params);
+  };
+
   return (
-    <section className="lg:w-1/3 xl:w-1/4 bg-card rounded-2xl h-96 p-6 shadow-md border animate-fade-in">
-      <h2 className="text-xl font-semibold mb-4 text-primary">Filter Tours</h2>
-      <div className="space-y-5">
+    <section className="md:sticky md:top-24 lg:w-1/3 xl:w-1/4 bg-card rounded-2xl md:h-96 p-6 shadow-md border">
+      <div className="flex justify-between items-center">
+        <h2 className="text-xl font-semibold">Filter Tours</h2>
+        <div className="flex items-center gap-x-1">
+          <Button variant="outline" size="sm" onClick={handleFilterClear}>
+            Clear Filter
+          </Button>
+          {isFilterOpen ? (
+            <Button
+              variant="outline"
+              size="sm"
+              className="md:hidden p-2"
+              onClick={() => setIsFilterOpen(!isFilterOpen)}
+            >
+              <X className="w-5 h-5" />
+            </Button>
+          ) : (
+            <Button
+              variant="outline"
+              size="sm"
+              className="md:hidden p-2"
+              onClick={() => setIsFilterOpen(!isFilterOpen)}
+            >
+              <FilterIcon className="w-5 h-5" />
+            </Button>
+          )}
+        </div>
+      </div>
+
+      <div
+        className={`space-y-5 transition-all duration-300 ease-in-out
+          ${
+            isFilterOpen
+              ? "max-h-[2000px] opacity-100 "
+              : "max-h-0 opacity-0 overflow-hidden"
+          }
+          md:max-h-full md:opacity-100`}
+      >
         {/* Search */}
-        <div className="relative">
+        <div className="relative mt-4">
           <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search tours or destinations..."
+            placeholder="Search tours..."
             className="pl-10 w-full"
+            value={search ?? ""}
+            onChange={handleSearch}
           />
         </div>
 
-        {/* Category */}
+        {/* Division */}
         <div>
           <label className="text-sm font-medium text-muted-foreground mb-1 block">
-            Category
+            Division
           </label>
-          <Select>
+          <Select
+            onValueChange={handleDivisionChange}
+            value={selectDivision ? selectDivision : ""}
+            disabled={divisionLoading}
+          >
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select category" />
+              <SelectValue placeholder="Select a division" />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="adventure">Adventure</SelectItem>
-              <SelectItem value="cultural">Cultural</SelectItem>
-              <SelectItem value="family">Family</SelectItem>
-              <SelectItem value="romantic">Romantic</SelectItem>
+            <SelectContent className="w-full">
+              {divisionOptions?.map(
+                (item: { value: string; label: string }) => (
+                  <SelectItem key={item.value} value={item.value}>
+                    {item.label}
+                  </SelectItem>
+                )
+              )}
             </SelectContent>
           </Select>
         </div>
-
-        {/* Price */}
+        {/* Tour Type  */}
         <div>
           <label className="text-sm font-medium text-muted-foreground mb-1 block">
-            Price Range
+            Tour Type
           </label>
-          <Select>
+          <Select
+            onValueChange={handleTourTypeChange}
+            value={selectTourType ? selectTourType : ""}
+            disabled={tourTypeLoading}
+          >
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select range" />
+              <SelectValue placeholder="Select a division" />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="0-100">$0 - $100</SelectItem>
-              <SelectItem value="100-500">$100 - $500</SelectItem>
-              <SelectItem value="500-1000">$500 - $1000</SelectItem>
-              <SelectItem value="1000+">$1000+</SelectItem>
+            <SelectContent className="w-full">
+              {tourTypeOptions?.map(
+                (item: { value: string; label: string }) => (
+                  <SelectItem key={item.value} value={item.value}>
+                    {item.label}
+                  </SelectItem>
+                )
+              )}
             </SelectContent>
           </Select>
         </div>
@@ -63,16 +187,16 @@ export default function FilterTours() {
           <label className="text-sm font-medium text-muted-foreground mb-1 block">
             Sort By
           </label>
-          <Select>
+          <Select
+            onValueChange={handleSortChange}
+            value={selectSort ? selectSort : ""}
+          >
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Choose option" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="featured">Featured</SelectItem>
               <SelectItem value="price-low">Price: Low to High</SelectItem>
               <SelectItem value="price-high">Price: High to Low</SelectItem>
-              <SelectItem value="rating">Highest Rated</SelectItem>
-              <SelectItem value="duration">Duration</SelectItem>
             </SelectContent>
           </Select>
         </div>

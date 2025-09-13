@@ -1,6 +1,6 @@
 import { lazy } from "react";
 import type { ISidebarItem } from "@/types";
-const Bookings = lazy(() => import("@/pages/User/Bookings"));
+const BookingHistory = lazy(() => import("@/pages/User/BookingHistory"));
 
 export const userSidebarItems: ISidebarItem[] = [
   {
@@ -9,7 +9,7 @@ export const userSidebarItems: ISidebarItem[] = [
       {
         title: "Bookings",
         url: "/user/bookings",
-        component: Bookings,
+        component: BookingHistory,
       },
     ],
   },

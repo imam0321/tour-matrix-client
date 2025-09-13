@@ -1,5 +1,5 @@
 import { baseApi } from "@/redux/baseApi";
-import type { IBookingResponse, IResponse } from "@/types";
+import type { IBookingData, IBookingResponse, IResponse } from "@/types";
 
 export const bookingApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -13,7 +13,17 @@ export const bookingApi = baseApi.injectEndpoints({
         data: bookingData,
       }),
     }),
+
+    getMyBookings: builder.query<IResponse<IBookingData[]>, unknown>({
+      query: (params) => ({
+        url: `/booking/my-bookings`,
+        method: "GET",
+        params,
+      }),
+    }),
+
+    
   }),
 });
 
-export const { useCreateBookingMutation } = bookingApi;
+export const { useCreateBookingMutation, useGetMyBookingsQuery } = bookingApi;
