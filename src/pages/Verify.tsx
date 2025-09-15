@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Logo from "@/assets/icons/Logo";
 import { Button } from "@/components/ui/button";
 import {
@@ -65,8 +66,8 @@ export default function Verify() {
         setConfirmed(true);
         setTimer(100);
       }
-    } catch (error) {
-      toast.error(error);
+    } catch (error: any) {
+      toast.error(error.data.message);
     }
   };
 
@@ -101,8 +102,8 @@ export default function Verify() {
         toast.success("OTP Verified", { id: toastId });
         navigate("/");
       }
-    } catch (error) {
-      toast.error(error);
+    } catch (error: any) {
+      toast.error(error.data.message);
     }
   };
 
