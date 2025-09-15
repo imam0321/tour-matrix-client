@@ -6,7 +6,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { User, Mail, Edit2, Save, X, CheckCircle, XCircle, Camera } from "lucide-react";
+import {
+  User,
+  Mail,
+  Edit2,
+  Save,
+  X,
+  CheckCircle,
+  XCircle,
+  Camera,
+} from "lucide-react";
 import { useUserInfoQuery } from "@/redux/features/auth/auth.api";
 import ChangePassword from "@/components/modules/Authentication/ChangePassword";
 import { role } from "@/constants/role";
@@ -24,6 +33,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { useUpdateUserMutation } from "@/redux/features/user/user";
+import { ProfileLoading } from "@/components/modules/Profile/ProfileLoading";
 
 const profileSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -37,7 +47,7 @@ export default function ProfilePage() {
   const [isSaving, setIsSaving] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
 
-  const { data: userInfo } = useUserInfoQuery(undefined);
+  const { data: userInfo, isLoading } = useUserInfoQuery(undefined);
   const [updateUser] = useUpdateUserMutation();
 
   const form = useForm<z.infer<typeof profileSchema>>({
@@ -59,6 +69,10 @@ export default function ProfilePage() {
       setPreviewImage(userInfo.picture || null);
     }
   }, [userInfo, form]);
+
+  if (isLoading) {
+    return <ProfileLoading />;
+  }
 
   if (!userInfo) return null;
 
@@ -107,8 +121,9 @@ export default function ProfilePage() {
   return (
     <section className="w-full max-w-3xl mx-auto">
       {/* Header */}
-      <div className="flex items-center justify-between mb-5">
-        <div className="flex items-center gap-3">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-5 gap-4 md:gap-0">
+        {/* Left section: avatar + name */}
+        <div className="flex flex-col md:flex-row items-center gap-4 sm:gap-3">
           <div className="relative">
             <img
               src={previewImage || "/default-avatar.png"}
@@ -133,9 +148,10 @@ export default function ProfilePage() {
               </label>
             )}
           </div>
-          <div>
-            <p className="text-xl">{userInfo.name}</p>
-            <p className="flex items-center gap-2 text-sm text-muted-foreground">
+
+          <div className="text-center sm:text-left">
+            <p className="text-xl font-semibold">{userInfo.name}</p>
+            <p className="flex items-center gap-2 text-sm text-muted-foreground justify-center sm:justify-start">
               <CheckCircle className="h-4 w-4 text-green-600" />
               {userInfo.isActive ? "Active" : "Inactive"} • Joined{" "}
               {format(userInfo.createdAt, "PP")}
@@ -143,23 +159,30 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        {/* Right section: buttons */}
+        <div className="flex flex-col sm:flex-row items-center gap-2">
           {!isEditing ? (
             <Button onClick={() => setIsEditing(true)} size="sm">
               <Edit2 className="h-4 w-4 mr-1" />
               Edit
             </Button>
           ) : (
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
               <Button
                 onClick={form.handleSubmit(onSubmit)}
                 size="sm"
                 disabled={isSaving}
+                className="w-full sm:w-auto"
               >
                 <Save className="h-4 w-4 mr-1" />
                 Save
               </Button>
-              <Button onClick={handleCancel} variant="outline" size="sm">
+              <Button
+                onClick={handleCancel}
+                variant="outline"
+                size="sm"
+                className="w-full sm:w-auto"
+              >
                 <X className="h-4 w-4 mr-1" />
                 Cancel
               </Button>
