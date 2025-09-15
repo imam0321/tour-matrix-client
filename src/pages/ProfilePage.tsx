@@ -1,306 +1,291 @@
-import { useState } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Separator } from "@/components/ui/separator";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  User,
-  Mail,
-  Phone,
-  MapPin,
-  Calendar,
-  Edit2,
-  Save,
-  X,
-  CheckCircle,
-  XCircle,
-} from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { User, Mail, Edit2, Save, X, CheckCircle, XCircle, Camera } from "lucide-react";
 import { useUserInfoQuery } from "@/redux/features/auth/auth.api";
-import type { IUser } from "@/types/booking.type";
 import ChangePassword from "@/components/modules/Authentication/ChangePassword";
-import { format } from "date-fns";
 import { role } from "@/constants/role";
+import { format } from "date-fns";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import z from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
+import { useUpdateUserMutation } from "@/redux/features/user/user";
+
+const profileSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  phone: z.string().min(10, "Enter a valid phone number").optional(),
+  address: z.string().optional(),
+  picture: z.any().optional(),
+});
 
 export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
-  const [editedUser, setEditedUser] = useState<IUser | null>(null);
-  const { data: user } = useUserInfoQuery(undefined);
+  const [isSaving, setIsSaving] = useState(false);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
-  if (!user) return null;
+  const { data: userInfo } = useUserInfoQuery(undefined);
+  const [updateUser] = useUpdateUserMutation();
 
-  const handleEdit = () => {
-    setEditedUser({ ...user });
-    setIsEditing(true);
-  };
+  const form = useForm<z.infer<typeof profileSchema>>({
+    resolver: zodResolver(profileSchema),
+    defaultValues: {
+      name: userInfo?.name || "",
+      phone: userInfo?.phone || "",
+      address: userInfo?.address || "",
+    },
+  });
 
-  const handleSave = () => {
-    // TODO: Replace with API mutation call
-    console.log("Saving user:", editedUser);
-    setIsEditing(false);
-    setEditedUser(null);
+  useEffect(() => {
+    if (userInfo) {
+      form.reset({
+        name: userInfo.name || "",
+        phone: userInfo.phone || "",
+        address: userInfo.address || "",
+      });
+      setPreviewImage(userInfo.picture || null);
+    }
+  }, [userInfo, form]);
+
+  if (!userInfo) return null;
+
+  const onSubmit = async (data: z.infer<typeof profileSchema>) => {
+    if (!userInfo?._id) return;
+
+    setIsSaving(true);
+    const toastId = toast.loading("Updating user info...");
+
+    try {
+      const formData = new FormData();
+      formData.append("name", data.name);
+      if (data.phone) formData.append("phone", data.phone);
+      if (data.address) formData.append("address", data.address);
+      if (data.picture instanceof File) {
+        formData.append("file", data.picture);
+      }
+
+      await updateUser({
+        userId: userInfo._id,
+        payload: formData,
+      }).unwrap();
+
+      toast.success("Profile updated successfully!", { id: toastId });
+      setIsEditing(false);
+    } catch (error: any) {
+      console.error(error);
+      toast.error(error?.data?.message, {
+        id: toastId,
+      });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleCancel = () => {
+    form.reset({
+      name: userInfo?.name || "",
+      phone: userInfo?.phone || "",
+      address: userInfo?.address || "",
+    });
+    setPreviewImage(userInfo.picture || null);
     setIsEditing(false);
-    setEditedUser(null);
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "ACTIVE":
-        return "text-green-600";
-      case "INACTIVE":
-        return "text-gray-600";
-      case "BLOCKED":
-        return "text-red-600";
-      default:
-        return "text-gray-600";
-    }
-  };
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case "ACTIVE":
-        return <CheckCircle className={`h-4 w-4 ${getStatusColor(status)}`} />;
-      case "INACTIVE":
-        return <XCircle className="h-4 w-4 text-gray-600" />;
-      case "BLOCKED":
-        return <XCircle className="h-4 w-4 text-red-600" />;
-      default:
-        return <XCircle className="h-4 w-4 text-gray-600" />;
-    }
   };
 
   return (
-    <section className="w-full max-w-4xl mx-auto">
-      <div>
-        <div className="flex items-center justify-between mb-5">
-          <div className="flex items-center gap-3">
+    <section className="w-full max-w-3xl mx-auto">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-5">
+        <div className="flex items-center gap-3">
+          <div className="relative">
             <img
-              src={user.picture}
-              alt={user.name}
+              src={previewImage || "/default-avatar.png"}
+              alt={userInfo.name}
               className="h-24 w-24 border rounded-full object-cover"
             />
-            <div>
-              <p className="text-xl">{user.name}</p>
-              <p className="flex items-center gap-2">
-                {getStatusIcon(user.isActive)}
-                {user.isActive} 
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            {!isEditing ? (
-              <Button onClick={handleEdit} size="sm">
-                <Edit2 className="h-4 w-4 mr-1" />
-                Edit
-              </Button>
-            ) : (
-              <div className="flex gap-2">
-                <Button onClick={handleSave} size="sm">
-                  <Save className="h-4 w-4" />
-                  Save
-                </Button>
-                <Button onClick={handleCancel} variant="outline" size="sm">
-                  <X className="h-4 w-4 mr-1" />
-                  Cancel
-                </Button>
-              </div>
+            {isEditing && (
+              <label className="absolute bottom-0 right-0 bg-primary text-white p-1 rounded-full cursor-pointer">
+                <Camera className="h-4 w-4" />
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    if (e.target.files && e.target.files[0]) {
+                      const file = e.target.files[0];
+                      setPreviewImage(URL.createObjectURL(file));
+                      form.setValue("picture", file);
+                    }
+                  }}
+                />
+              </label>
             )}
           </div>
+          <div>
+            <p className="text-xl">{userInfo.name}</p>
+            <p className="flex items-center gap-2 text-sm text-muted-foreground">
+              <CheckCircle className="h-4 w-4 text-green-600" />
+              {userInfo.isActive ? "Active" : "Inactive"} • Joined{" "}
+              {format(userInfo.createdAt, "PP")}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          {!isEditing ? (
+            <Button onClick={() => setIsEditing(true)} size="sm">
+              <Edit2 className="h-4 w-4 mr-1" />
+              Edit
+            </Button>
+          ) : (
+            <div className="flex gap-2">
+              <Button
+                onClick={form.handleSubmit(onSubmit)}
+                size="sm"
+                disabled={isSaving}
+              >
+                <Save className="h-4 w-4 mr-1" />
+                Save
+              </Button>
+              <Button onClick={handleCancel} variant="outline" size="sm">
+                <X className="h-4 w-4 mr-1" />
+                Cancel
+              </Button>
+            </div>
+          )}
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Personal Information */}
-        <div className="lg:col-span-2 space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <User className="h-5 w-5" />
-                Personal Information
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Full Name */}
-                <div className="space-y-2">
-                  <Label htmlFor="name">Full Name</Label>
-                  {isEditing ? (
-                    <Input
-                      id="name"
-                      value={editedUser?.name || ""}
-                      onChange={(e) =>
-                        setEditedUser((prev) =>
-                          prev ? { ...prev, name: e.target.value } : null
-                        )
-                      }
-                    />
-                  ) : (
-                    <p className="text-sm font-medium">{user.name}</p>
+      {/* Personal Information */}
+      <div className="lg:col-span-2 space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <User className="h-5 w-5" />
+              Personal Information
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Form {...form}>
+              <form className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Name */}
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Full Name</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter your full name"
+                          disabled={!isEditing || isSaving}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
                   )}
-                </div>
+                />
 
-                {/* Email */}
+                {/* Email (read-only) */}
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email Address</Label>
-                  <div className="flex items-center gap-2">
+                  <Label>Email Address</Label>
+                  <div className="flex items-center gap-2 p-2 border rounded-md bg-muted/30">
                     <Mail className="h-4 w-4 text-muted-foreground" />
-                    <p className="text-sm">{user.email}</p>
-                    {user.isVerified === true? (
-                      <CheckCircle className="h-4 w-4 text-green-600" />
-                    ): <XCircle className="h-4 w-4 text-red-600" />}
+                    <p className="text-sm font-medium">{userInfo.email}</p>
+                    {userInfo.isVerified ? (
+                      <span className="flex items-center text-green-600 text-xs font-semibold gap-1">
+                        <CheckCircle className="h-4 w-4" /> Verified
+                      </span>
+                    ) : (
+                      <span className="flex items-center text-red-600 text-xs font-semibold gap-1">
+                        <XCircle className="h-4 w-4" /> Not Verified
+                      </span>
+                    )}
                   </div>
                 </div>
 
                 {/* Phone */}
-                <div className="space-y-2">
-                  <Label htmlFor="phone">Phone Number</Label>
-                  {isEditing ? (
-                    <Input
-                      id="phone"
-                      value={editedUser?.phone || ""}
-                      onChange={(e) =>
-                        setEditedUser((prev) =>
-                          prev ? { ...prev, phone: e.target.value } : null
-                        )
-                      }
-                    />
-                  ) : (
-                    <div className="flex items-center gap-2">
-                      <Phone className="h-4 w-4 text-muted-foreground" />
-                      <p className="text-sm">{user.phone}</p>
-                    </div>
+                <FormField
+                  control={form.control}
+                  name="phone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Phone Number</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter your phone number"
+                          disabled={!isEditing || isSaving}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
                   )}
-                </div>
+                />
 
-                {/* Role */}
+                {/* Role (read-only) */}
                 <div className="space-y-2">
-                  <Label htmlFor="role">Role</Label>
-                  <Badge
-                    variant="outline"
-                    className={
-                      user.role === role.superAdmin
-                        ? "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
-                        : user.role === role.user
-                        ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
-                        : "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200"
-                    }
-                  >
-                    {user.role}
-                  </Badge>
-                </div>
-              </div>
-
-              {/* Address */}
-              <div className="space-y-2">
-                <Label htmlFor="address">Address</Label>
-                {isEditing ? (
-                  <Textarea
-                    id="address"
-                    value={editedUser?.address || ""}
-                    onChange={(e) =>
-                      setEditedUser((prev) =>
-                        prev ? { ...prev, address: e.target.value } : null
-                      )
-                    }
-                    rows={3}
-                  />
-                ) : (
-                  <div className="flex items-start gap-2">
-                    <MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
-                    <p className="text-sm">{user.address}</p>
+                  <Label>Role</Label>
+                  <div className="flex items-center gap-2 p-2 border rounded-md bg-muted/30">
+                    <User className="h-4 w-4 text-muted-foreground" />
+                    <Badge
+                      variant="outline"
+                      className={
+                        userInfo.role === role.superAdmin
+                          ? "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+                          : userInfo.role === role.user
+                          ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
+                          : "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200"
+                      }
+                    >
+                      {userInfo.role === role.superAdmin
+                        ? "Super Admin"
+                        : userInfo.role === role.user
+                        ? "User"
+                        : userInfo.role}
+                    </Badge>
                   </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Authentication Methods */}
-          <ChangePassword />
-        </div>
-
-        {/* Status & Account Info */}
-        <div className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Account Status</CardTitle>
-              <CardDescription>
-                Current account status and settings
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {/* Status */}
-              <div className="space-y-2">
-                <Label>Account Status</Label>
-                <div className="flex items-center gap-2">
-                  {getStatusIcon(user.isActive)}
-                  <span
-                    className={`font-medium ${getStatusColor(user.isActive)}`}
-                  >
-                    {user.isActive}
-                  </span>
-                </div>
-              </div>
-
-              <Separator />
-
-              {/* Verification & Deletion */}
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm">Email Verified</span>
-                  <Badge
-                    variant={user.isVerified ? "default" : "secondary"}
-                    className={
-                      user.isVerified
-                        ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-                        : ""
-                    }
-                  >
-                    {user.isVerified ? "Verified" : "Unverified"}
-                  </Badge>
                 </div>
 
-                <div className="flex items-center justify-between">
-                  <span className="text-sm">Account Deleted</span>
-                  <Badge
-                    variant={user.isDeleted ? "destructive" : "default"}
-                    className={
-                      !user.isDeleted
-                        ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-                        : ""
-                    }
-                  >
-                    {user.isDeleted ? "Deleted" : "Active"}
-                  </Badge>
-                </div>
-              </div>
+                {/* Address */}
+                <FormField
+                  control={form.control}
+                  name="address"
+                  render={({ field }) => (
+                    <FormItem className="md:col-span-2">
+                      <FormLabel>Address</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Enter your address"
+                          rows={3}
+                          disabled={!isEditing || isSaving}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </form>
+            </Form>
+          </CardContent>
+        </Card>
 
-              <Separator />
-
-              {/* Member Since */}
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm">Member Since</span>
-                </div>
-                <p className="text-sm font-medium">
-                  {format(user.createdAt, "PP")}
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        {/* Authentication Methods */}
+        <ChangePassword />
       </div>
     </section>
   );
