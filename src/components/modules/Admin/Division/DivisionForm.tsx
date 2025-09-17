@@ -33,6 +33,7 @@ import {
 } from "@/redux/features/tour/division.api";
 import { toast } from "sonner";
 import type { IDivisionResponse } from "@/types";
+import type { FileMetadata } from "@/hooks/use-file-upload";
 
 interface IDivisionProps {
   initialData: IDivisionResponse | null;
@@ -52,7 +53,7 @@ export default function DivisionForm({
   setOpen,
   onComplete,
 }: IDivisionProps) {
-  const [image, setImage] = useState<File | null>(null);
+  const [image, setImage] = useState<(File| FileMetadata) | null>(null);
   const [, setPreviewImage] = useState<string | null>(null);
 
   const [addDivision] = useAddDivisionMutation();
@@ -95,7 +96,7 @@ export default function DivisionForm({
 
     formData.append("name", data.name);
     if (data.description) formData.append("description", data.description);
-    if (image) formData.append("file", image);
+    if (image) formData.append("file", image as File);
 
     try {
       if (initialData) {

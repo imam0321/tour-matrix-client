@@ -9,12 +9,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
 import type { ITourTypeResponse } from "@/types";
 import { useState } from "react";
 import TourTypeForm from "@/components/modules/Admin/TourTypes/TourTypeForm";
 import { toast } from "sonner";
 import AllTourTypes from "@/components/modules/Admin/TourTypes/AllTourTypes";
+import PaginationData from "@/utils/PaginationData";
 
 export default function AddTourType() {
   const [editTourType, setEditTourType] = useState<ITourTypeResponse | null>(
@@ -60,26 +60,12 @@ export default function AddTourType() {
           />
         </Table>
         {/* Pagination */}
-        <div className="flex justify-center gap-2 my-2">
-          <Button
-            variant="outline"
-            size="sm"
-            disabled={page === 1}
-            onClick={() => setPage((prev) => prev - 1)}
-          >
-            Prev
-          </Button>
-          <span className="flex items-center">
-            Page {data?.meta?.page} of {data?.meta?.totalPage}
-          </span>
-          <Button
-            variant="outline"
-            size="sm"
-            disabled={page === data?.meta?.totalPage}
-            onClick={() => setPage((prev) => prev + 1)}
-          >
-            Next
-          </Button>
+        <div className="pb-2 mt-0">
+          <PaginationData
+            currentPage={page}
+            totalPages={data?.meta?.totalPage as number}
+            onPageChange={(p) => setPage(p)}
+          />
         </div>
       </div>
     </div>

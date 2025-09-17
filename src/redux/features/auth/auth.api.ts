@@ -31,6 +31,13 @@ export const authApi = baseApi.injectEndpoints({
         data: userInfo,
       }),
     }),
+    changePassword: builder.mutation<IResponse<null>, { oldPassword: string; newPassword: string }>({
+      query: (payload) => ({
+        url: "/auth/change-password",
+        method: "POST",
+        data: payload,
+      }),
+    }),
     sendOtp: builder.mutation<IResponse<null>, ISendOtp>({
       query: (userInfo) => ({
         url: "/otp/send",
@@ -59,6 +66,7 @@ export const authApi = baseApi.injectEndpoints({
 export const {
   useLoginMutation,
   useRegisterMutation,
+  useChangePasswordMutation,
   useSendOtpMutation,
   useVerifyOtpMutation,
   useLogoutMutation,

@@ -3,11 +3,20 @@ import { EyeIcon, EyeOffIcon } from "lucide-react"
 
 import { Input } from "@/components/ui/input"
 
-export default function Password({...filed}) {
+export default function Password({...field}) {
   const id = useId()
   const [isVisible, setIsVisible] = useState<boolean>(false)
 
   const toggleVisibility = () => setIsVisible((prevState) => !prevState)
+
+  const defaultPlaceholder =
+    field.name === "oldPassword"
+      ? "Enter your old password"
+      : field.name === "newPassword"
+      ? "Enter your new password"
+      : field.name === "confirmPassword"
+      ? "Confirm your password"
+      : "Enter your password";
 
   return (
     <div className="*:not-first:mt-2">
@@ -15,8 +24,8 @@ export default function Password({...filed}) {
         <Input
           id={id}
           className="pe-9"
-          placeholder={filed.name === "confirmPassword" ? "Enter your confirm password": "Enter your password" }
-          {...filed}
+          placeholder={defaultPlaceholder}
+          {...field}
           required
           type={isVisible ? "text" : "password"}
         />

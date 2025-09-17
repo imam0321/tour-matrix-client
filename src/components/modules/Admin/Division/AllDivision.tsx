@@ -1,7 +1,7 @@
 import { Table, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import Division from "./Division";
-import { Button } from "@/components/ui/button";
 import type { IDivisionResponse } from "@/types";
+import PaginationData from "@/utils/PaginationData";
 
 interface IAllDivisionProps {
   isLoading: boolean;
@@ -42,26 +42,12 @@ export default function AllDivision({
         />
       </Table>
       {/* Pagination */}
-      <div className="flex justify-center gap-2 my-2">
-        <Button
-          variant="outline"
-          size="sm"
-          disabled={page === 1}
-          onClick={() => setPage((prev) => prev - 1)}
-        >
-          Prev
-        </Button>
-        <span className="flex items-center">
-          Page {meta?.page} of {meta?.totalPage}
-        </span>
-        <Button
-          variant="outline"
-          size="sm"
-          disabled={page === meta?.totalPage}
-          onClick={() => setPage((prev) => prev + 1)}
-        >
-          Next
-        </Button>
+      <div className="pb-2 mt-0">
+        <PaginationData
+          currentPage={page}
+          totalPages={meta?.totalPage as number}
+          onPageChange={(p) => setPage(p)}
+        />
       </div>
     </div>
   );

@@ -46,7 +46,7 @@ export default function BookingStats({ bookings, isLoading }: IBookingsProps) {
     },
     {
       title: "Average Rating",
-      value: "5.0",
+      value: bookings.length > 0 ? "4.5" : "0.0",
       subtitle: "From completed trips",
       icon: <Star className="h-4 w-4 text-muted-foreground" />,
     },

@@ -8,6 +8,7 @@ export type {
   ILogin,
   ISendOtp,
   IVerifyOtp,
+  IUserUpdate
 } from "./auth.type";
 
 export type { ITourResponse, ITourType, ITourTypeResponse, IDivision, IDivisionResponse } from "./tour.type";

@@ -36,6 +36,20 @@ export interface User {
   phone?: string;
   address?: string;
 }
+export interface IUserUpdate {
+  _id?: string;
+  name?: string;
+  role?: TRole;
+  picture?: string;
+  isDeleted?: boolean;
+  isActive?: TIsActive;
+  isVerified?: boolean;
+  auths?: IAuthProvider;
+  phone?: string;
+  address?: string;
+}
+
+
 
 export interface IRegisterResponse {
   _id: string;

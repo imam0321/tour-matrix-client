@@ -99,93 +99,97 @@ export default function UpcomingBookings({
       <CardContent>
         <ScrollArea className="h-96 rounded-md">
           <div className="space-y-4">
-            {upcomingBookings.map((booking) => {
-              const start = new Date(booking.tour.startDate || "");
-              const end = new Date(booking.tour.endDate || "");
-              const days = differenceInDays(end, start) + 1;
-              return (
-                <div key={booking._id} className="p-4 border rounded-lg">
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="font-semibold">{booking.tour.title}</h3>
-                    <Badge
-                      variant={
-                        booking.status === "COMPLETE"
-                          ? "default"
-                          : "destructive"
-                      }
-                    >
-                      {booking.status}
-                    </Badge>
-                  </div>
+            {upcomingBookings.length === 0 ? (
+              <div>Upcoming Booking not found</div>
+            ) : (
+              upcomingBookings.map((booking) => {
+                const start = new Date(booking.tour.startDate || "");
+                const end = new Date(booking.tour.endDate || "");
+                const days = differenceInDays(end, start) + 1;
+                return (
+                  <div key={booking._id} className="p-4 border rounded-lg">
+                    <div className="flex justify-between items-start mb-2">
+                      <h3 className="font-semibold">{booking.tour.title}</h3>
+                      <Badge
+                        variant={
+                          booking.status === "COMPLETE"
+                            ? "default"
+                            : "destructive"
+                        }
+                      >
+                        {booking.status}
+                      </Badge>
+                    </div>
 
-                  <div className="space-y-2 text-sm text-muted-foreground">
-                    <div className="flex items-center gap-2">
-                      <MapPin className="h-4 w-4" />
-                      {booking.tour.location}
+                    <div className="space-y-2 text-sm text-muted-foreground">
+                      <div className="flex items-center gap-2">
+                        <MapPin className="h-4 w-4" />
+                        {booking.tour.location}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Calendar className="h-4 w-4" />
+                        {format(start, "PP")} to {format(end, "PP")}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Clock className="h-4 w-4" />
+                        {days} days
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Users className="h-4 w-4" />
+                        {booking.guestCount} guests
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Calendar className="h-4 w-4" />
-                      {format(start, "PP")} to {format(end, "PP")}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Clock className="h-4 w-4" />
-                      {days} days
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Users className="h-4 w-4" />
-                      {booking.guestCount} guests
-                    </div>
-                  </div>
 
-                  <div className="flex justify-between items-center mt-3">
-                    <span className="font-semibold text-primary">
-                      ${booking.tour.costFrom}
-                    </span>
-                    <div className="space-x-2 flex items-center">
-                      <Button size="sm" variant="outline" asChild>
-                        <Link
-                          to={`/tours/${booking.tour._id}`}
-                          onClick={() =>
-                            window.scrollTo({ top: 0, behavior: "smooth" })
-                          }
-                        >
-                          View
-                        </Link>
-                      </Button>
-                      {booking.status !== "COMPLETE" && (
-                        <Button
-                          onClick={() => handleInitPayment(booking._id)}
-                          size="sm"
-                        >
-                          {initPaymentLoading ? "Pay ....." : "Pay Booking"}
+                    <div className="flex justify-between items-center mt-3">
+                      <span className="font-semibold text-primary">
+                        ${booking.tour.costFrom}
+                      </span>
+                      <div className="space-x-2 flex items-center">
+                        <Button size="sm" variant="outline" asChild>
+                          <Link
+                            to={`/tours/${booking.tour._id}`}
+                            onClick={() =>
+                              window.scrollTo({ top: 0, behavior: "smooth" })
+                            }
+                          >
+                            View
+                          </Link>
                         </Button>
-                      )}
-                      {booking.status === "COMPLETE" &&
-                        (() => {
-                          const isLoadingThisInvoice =
-                            loadingInvoiceId === booking.payment;
+                        {booking.status !== "COMPLETE" && (
+                          <Button
+                            onClick={() => handleInitPayment(booking._id)}
+                            size="sm"
+                          >
+                            {initPaymentLoading ? "Pay ....." : "Pay Booking"}
+                          </Button>
+                        )}
+                        {booking.status === "COMPLETE" &&
+                          (() => {
+                            const isLoadingThisInvoice =
+                              loadingInvoiceId === booking.payment;
 
-                          return (
-                            <Button
-                              onClick={() =>
-                                handleDownloadInvoice(booking.payment)
-                              }
-                              size="sm"
-                              disabled={isDownloadingInvoice}
-                            >
-                              {isLoadingThisInvoice ? (
-                                "Downloading ....."
-                              ) : (
-                                <Download />
-                              )}
-                            </Button>
-                          );
-                        })()}
+                            return (
+                              <Button
+                                onClick={() =>
+                                  handleDownloadInvoice(booking.payment)
+                                }
+                                size="sm"
+                                disabled={isDownloadingInvoice}
+                              >
+                                {isLoadingThisInvoice ? (
+                                  "Downloading ....."
+                                ) : (
+                                  <Download />
+                                )}
+                              </Button>
+                            );
+                          })()}
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })
+            )}
           </div>
         </ScrollArea>
       </CardContent>
