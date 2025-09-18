@@ -36,6 +36,7 @@ import { useUpdateUserMutation } from "@/redux/features/user/user";
 import { ProfileLoading } from "@/components/modules/Profile/ProfileLoading";
 import SetPassword from "@/components/modules/Authentication/SetPassword";
 import type { IAuthProvider } from "@/types/auth.type";
+import ProfilePicture from "@/assets/images/profileImage.png"
 
 const profileSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -133,7 +134,7 @@ export default function ProfilePage() {
         <div className="flex flex-col md:flex-row items-center gap-4 sm:gap-3">
           <div className="relative">
             <img
-              src={previewImage || "/default-avatar.png"}
+              src={previewImage || ProfilePicture}
               alt={userInfo.name}
               className="h-24 w-24 border rounded-full object-cover"
             />

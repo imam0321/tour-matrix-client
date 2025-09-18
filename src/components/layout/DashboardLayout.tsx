@@ -9,7 +9,7 @@ export default function DashboardLayout() {
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <header className="flex h-16 shrink-0 justify-between items-center gap-2 border-b px-4">
+        <header className="flex sticky top-0 bg-background h-16 shrink-0 justify-between items-center gap-2 border-b px-4 z-50">
           <SidebarTrigger className="-ml-1" />
           <div className="flex items-center gap-x-2">
             <ModeToggle />
