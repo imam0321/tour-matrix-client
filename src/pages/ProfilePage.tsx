@@ -34,6 +34,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { useUpdateUserMutation } from "@/redux/features/user/user";
 import { ProfileLoading } from "@/components/modules/Profile/ProfileLoading";
+import SetPassword from "@/components/modules/Authentication/SetPassword";
+import type { IAuthProvider } from "@/types/auth.type";
 
 const profileSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -45,10 +47,11 @@ const profileSchema = z.object({
 export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | "">("");
 
   const { data: userInfo, isLoading } = useUserInfoQuery(undefined);
   const [updateUser] = useUpdateUserMutation();
+  console.log(userInfo);
 
   const form = useForm<z.infer<typeof profileSchema>>({
     resolver: zodResolver(profileSchema),
@@ -66,7 +69,11 @@ export default function ProfilePage() {
         phone: userInfo.phone || "",
         address: userInfo.address || "",
       });
-      setPreviewImage(userInfo.picture || null);
+      if (userInfo.picture) {
+        setPreviewImage(userInfo.picture);
+      } else {
+        setPreviewImage("");
+      }
     }
   }, [userInfo, form]);
 
@@ -114,7 +121,7 @@ export default function ProfilePage() {
       phone: userInfo?.phone || "",
       address: userInfo?.address || "",
     });
-    setPreviewImage(userInfo.picture || null);
+    setPreviewImage(userInfo.picture || "");
     setIsEditing(false);
   };
 
@@ -308,7 +315,13 @@ export default function ProfilePage() {
         </Card>
 
         {/* Authentication Methods */}
-        <ChangePassword />
+        {userInfo?.auths?.some(
+          (a: IAuthProvider) => a.provider === "Credential"
+        ) ? (
+          <ChangePassword />
+        ) : (
+          <SetPassword />
+        )}
       </div>
     </section>
   );
