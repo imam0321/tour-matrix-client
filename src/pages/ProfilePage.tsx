@@ -232,7 +232,7 @@ export default function ProfilePage() {
                 {/* Email (read-only) */}
                 <div className="space-y-2">
                   <Label>Email Address</Label>
-                  <div className="flex items-center gap-2 p-2 border rounded-md bg-muted/30">
+                  <div className="flex flex-wrap items-center gap-2 p-2 border rounded-md bg-muted/30">
                     <Mail className="h-4 w-4 text-muted-foreground" />
                     <p className="text-sm font-medium">{userInfo.email}</p>
                     {userInfo.isVerified ? (
