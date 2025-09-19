@@ -3,7 +3,7 @@ import type { IResponse, ITourResponse } from "@/types";
 
 export const tourApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    addTour: builder.mutation({
+    addTour: builder.mutation<IResponse<ITourResponse>, FormData>({
       query: (tourData) => ({
         url: "/tour/create",
         method: "POST",
@@ -19,11 +19,28 @@ export const tourApi = baseApi.injectEndpoints({
       }),
       providesTags: ["TOUR"],
     }),
+    updateTour: builder.mutation<IResponse<ITourResponse>, { id: string; formData: FormData }>({
+      query: ({ id, formData }) => ({
+        url: `/tour/${id}`,
+        method: "PATCH",
+        data: formData,
+      }),
+      invalidatesTags: ["TOUR"],
+    }),
+    deleteTour: builder.mutation<IResponse<null>, string>({
+      query: (id) => ({
+        url: `/tour/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["TOUR"],
+    })
 
   }),
 });
 
 export const {
   useGetToursQuery,
-  useAddTourMutation
+  useAddTourMutation,
+  useUpdateTourMutation,
+  useDeleteTourMutation,
 } = tourApi;

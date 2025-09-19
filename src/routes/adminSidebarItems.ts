@@ -5,6 +5,7 @@ const ProfilePage = lazy(() => import("@/pages/ProfilePage"));
 const AddTourType = lazy(() => import("@/pages/Admin/AddTourType"));
 const AddDivision = lazy(() => import("@/pages/Admin/AddDivision"));
 const AddTour = lazy(() => import("@/pages/Admin/AddTour"));
+const AllTours = lazy(() => import("@/pages/Admin/AllTours"));
 
 export const adminSidebarItems: ISidebarItem[] = [
   {
@@ -39,6 +40,11 @@ export const adminSidebarItems: ISidebarItem[] = [
         title: "Add Tour",
         url: "/admin/add-tour",
         component: AddTour,
+      },
+      {
+        title: "All Tours",
+        url: "/admin/all-tours",
+        component: AllTours,
       },
     ],
   },

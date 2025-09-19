@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,58 +18,40 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-interface Tour {
-  id: string;
-  name: string;
-  type: string;
-  startDate: string;
-  endDate: string;
-  price: number;
-}
+import {
+  useDeleteTourMutation,
+  useGetToursQuery,
+} from "@/redux/features/tour/tour.api";
+import { format } from "date-fns";
+import { PenIcon, Trash2 } from "lucide-react";
+import ButtonModal from "@/components/modules/Buttons/ButtonModal";
+import { toast } from "sonner";
+import { useNavigate } from "react-router";
 
 export default function AllTours() {
   const [search, setSearch] = useState("");
-  const [typeFilter, setTypeFilter] = useState("");
+  const [, setTypeFilter] = useState("");
+  const navigate = useNavigate();
 
-  const tours: Tour[] = [
-    {
-      id: "1",
-      name: "Everest Adventure",
-      type: "Trekking",
-      startDate: "2025-09-01",
-      endDate: "2025-09-10",
-      price: 1200,
-    },
-    {
-      id: "2",
-      name: "Sundarbans Cruise",
-      type: "Cruise",
-      startDate: "2025-10-05",
-      endDate: "2025-10-08",
-      price: 800,
-    },
-    {
-      id: "3",
-      name: "Cox’s Bazar Retreat",
-      type: "Beach",
-      startDate: "2025-11-12",
-      endDate: "2025-11-15",
-      price: 500,
-    },
-  ];
+  const { data } = useGetToursQuery(undefined);
+  const [deleteTour] = useDeleteTourMutation();
 
-  const filteredTours = tours.filter(
-    (tour) =>
-      tour.name.toLowerCase().includes(search.toLowerCase()) &&
-      (typeFilter === "" || tour.type === typeFilter)
-  );
+  const tours = data?.data || [];
+
+  const handleTourDelete = async (id: string) => {
+    try {
+      await deleteTour(id);
+      toast.success("Tour Delete successfully");
+    } catch (error: any) {
+      toast.error(error.data.message);
+    }
+  };
 
   return (
-    <div className="p-6">
+    <div className="w-full max-w-5xl mx-auto">
       <Card>
         <CardHeader>
-          <CardTitle>Tour Matrix</CardTitle>
+          <CardTitle>All Tours</CardTitle>
         </CardHeader>
         <CardContent>
           {/* Filters */}
@@ -97,22 +80,59 @@ export default function AllTours() {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead>Cover</TableHead>
                 <TableHead>Tour Name</TableHead>
                 <TableHead>Type</TableHead>
+                <TableHead>Division</TableHead>
                 <TableHead>Start Date</TableHead>
                 <TableHead>End Date</TableHead>
-                <TableHead>Price ($)</TableHead>
+                <TableHead>Price</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredTours.length > 0 ? (
-                filteredTours.map((tour) => (
-                  <TableRow key={tour.id}>
-                    <TableCell>{tour.name}</TableCell>
-                    <TableCell>{tour.type}</TableCell>
-                    <TableCell>{tour.startDate}</TableCell>
-                    <TableCell>{tour.endDate}</TableCell>
-                    <TableCell>{tour.price}</TableCell>
+              {tours?.length > 0 ? (
+                tours?.map((tour) => (
+                  <TableRow key={tour._id}>
+                    <TableCell>
+                      <img
+                        src={tour.images[0] || "Tour"}
+                        alt="DV"
+                        className="w-12 h-12 object-cover rounded border"
+                      />
+                    </TableCell>
+                    <TableCell>{tour.title}</TableCell>
+                    <TableCell>{tour.tourType.name}</TableCell>
+                    <TableCell>{tour.division.name}</TableCell>
+                    <TableCell>{format(tour.startDate, "PP")}</TableCell>
+                    <TableCell>{format(tour.endDate, "PP")}</TableCell>
+                    <TableCell>{tour.costFrom}</TableCell>
+                    <TableCell>
+                      <div className="flex justify-end items-center gap-2">
+                        <Button
+                          size="sm"
+                          className="bg-muted text-muted-foreground"
+                          onClick={() =>
+                            navigate("/admin/add-tour", {
+                              state: { tourData: tour },
+                            })
+                          }
+                        >
+                          <PenIcon />
+                        </Button>
+                        <ButtonModal
+                          actionName={
+                            <Button size="sm">
+                              <Trash2 />
+                            </Button>
+                          }
+                          title="Delete Tour"
+                          description="Are you sure delete this tour?"
+                          confirmHandler={handleTourDelete}
+                          id={tour._id}
+                        ></ButtonModal>
+                      </div>
+                    </TableCell>
                   </TableRow>
                 ))
               ) : (
