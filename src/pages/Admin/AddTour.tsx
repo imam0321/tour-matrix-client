@@ -110,9 +110,10 @@ export default function AddTour() {
   });
 
   useEffect(() => {
-    if (editTourData?.images?.length) {
-      setImages(editTourData.images); // store old image URLs in `images`
+    if (editTourData?.images) {
+      setOldImages(editTourData.images || []); // store old image URLs in `images`
     }
+    setImages([])
   }, [editTourData]);
 
   const {
@@ -499,7 +500,7 @@ export default function AddTour() {
                   <FormItem className="w-full">
                     <FormLabel>Tour Image</FormLabel>
                     <MultipleImageUploader
-                      preview={images}
+                      preview={editTourData.images || []}
                       onChange={setImages}
                     />
                   </FormItem>
