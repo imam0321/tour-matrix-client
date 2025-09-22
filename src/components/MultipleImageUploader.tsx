@@ -4,11 +4,13 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState, type Dispatch } from "react";
 
 export default function MultipleImageUploader({
-  preview = [],
+  preview,
   onChange,
+  handleRemoveOld,
 }: {
   onChange: Dispatch<React.SetStateAction<[] | (File | FileMetadata)[]>>;
   preview?: string[];
+  handleRemoveOld?: (index: number) => void;
 }) {
   const maxSizeMB = 5;
   const maxSize = maxSizeMB * 1024 * 1024;
@@ -32,8 +34,12 @@ export default function MultipleImageUploader({
     maxFiles,
   });
 
-  // local state for old previews
   const [oldPreviews, setOldPreviews] = useState<string[]>(preview || []);
+
+  // 🔥 keep synced if parent changes preview
+  useEffect(() => {
+    setOldPreviews(preview || []);
+  }, [preview]);
 
   useEffect(() => {
     if (files.length > 0) {
@@ -43,10 +49,6 @@ export default function MultipleImageUploader({
       onChange([]);
     }
   }, [files, onChange]);
-
-  const handleRemoveOld = (index: number) => {
-    setOldPreviews((prev) => prev.filter((_, i) => i !== index));
-  };
 
   const totalFiles = files.length + oldPreviews.length;
   const hasUploads = totalFiles > 0;
@@ -73,7 +75,7 @@ export default function MultipleImageUploader({
           <div className="flex w-full flex-col gap-3">
             <div className="flex items-center justify-between gap-2">
               <h3 className="truncate text-sm font-medium">
-                Uploaded Files ({totalFiles})
+                Uploaded Files ({totalFiles}/{maxFiles})
               </h3>
               <Button
                 variant="outline"
@@ -103,7 +105,7 @@ export default function MultipleImageUploader({
                     className="size-full rounded-[inherit] object-cover"
                   />
                   <Button
-                    onClick={() => handleRemoveOld(idx)}
+                    onClick={() => handleRemoveOld && handleRemoveOld(idx)}
                     type="button"
                     size="icon"
                     className="border-background focus-visible:border-background absolute -top-2 -right-2 size-6 rounded-full border-2 shadow-none"

@@ -42,19 +42,24 @@ import {
   type FieldValues,
   type SubmitHandler,
 } from "react-hook-form";
-import { useLocation } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { toast } from "sonner";
 
 export default function AddTour() {
-  const [startOpen, setStartOpen] = useState(false);
-  const [endOpen, setEndOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [images, setImages] = useState<(File | FileMetadata)[] | []>([]);
-  const [oldImages, setOldImages] = useState<string[]>([]);
-
   const location = useLocation();
   const editTourData = location.state?.tourData;
   const isEditing = Boolean(editTourData?._id);
+  const navigate = useNavigate();
+
+  const [startOpen, setStartOpen] = useState(false);
+  const [endOpen, setEndOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const [oldImages, setOldImages] = useState<string[]>(
+    editTourData?.images || []
+  );
+  const [newImages, setNewImages] = useState<(File | FileMetadata)[]>([]);
+  const [deleteImages, setDeleteImages] = useState<string[]>([]);
 
   const [addTour] = useAddTourMutation();
   const [updateTour] = useUpdateTourMutation();
@@ -110,11 +115,28 @@ export default function AddTour() {
   });
 
   useEffect(() => {
-    if (editTourData?.images) {
-      setOldImages(editTourData.images || []); // store old image URLs in `images`
-    }
-    setImages([])
-  }, [editTourData]);
+  if (!isEditing) {
+    form.reset({
+      title: "",
+      division: "",
+      tourType: "",
+      minAge: 0,
+      maxGuest: 0,
+      startDate: "",
+      endDate: "",
+      location: "",
+      description: "",
+      costFrom: 0,
+      included: [{ value: "" }],
+      excluded: [{ value: "" }],
+      amenities: [{ value: "" }],
+      tourPlan: [{ value: "" }],
+    });
+    setOldImages([]);
+    setNewImages([]);
+    setDeleteImages([]);
+  }
+}, [isEditing, form]);
 
   const {
     fields: includedFields,
@@ -154,6 +176,12 @@ export default function AddTour() {
 
   const startDate = form.watch("startDate");
 
+  const handleRemoveOldImage = (index: number) => {
+    const removed = oldImages[index];
+    setOldImages((prev) => prev.filter((_, i) => i !== index));
+    setDeleteImages((prev) => [...prev, removed]);
+  };
+
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     setLoading(true);
     const formData = new FormData();
@@ -168,11 +196,13 @@ export default function AddTour() {
       excluded: data.excluded.map((item: { value: string }) => item.value),
       amenities: data.amenities.map((item: { value: string }) => item.value),
       tourPlan: data.tourPlan.map((item: { value: string }) => item.value),
-      images: oldImages,
+      images: oldImages.length > 0 ? oldImages : undefined,
+      deleteImages,
     };
 
     formData.append("data", JSON.stringify(tourData));
-    images.forEach((image) => formData.append("files", image as File));
+    newImages.forEach((img) => formData.append("files", img as File));
+
     const toastId = toast.loading(
       isEditing ? "Updating tour..." : "Creating tour..."
     );
@@ -180,14 +210,20 @@ export default function AddTour() {
       if (isEditing) {
         await updateTour({ id: editTourData?._id, formData }).unwrap();
         toast.success("Tour updated successfully", { id: toastId });
+        navigate(`/tours/${editTourData._id}`);
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
       } else {
         await addTour(formData).unwrap();
         toast.success("Tour created successfully", { id: toastId });
       }
       setLoading(false);
       form.reset();
-      setImages([]);
       setOldImages([]);
+      setNewImages([]);
+      setDeleteImages([]);
     } catch (error: any) {
       toast.error(error.data.message, { id: toastId });
       setLoading(false);
@@ -199,7 +235,7 @@ export default function AddTour() {
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl font-bold">
-            {isEditing ? "Edit Tour" : "Add New Tour"}
+            {isEditing ? "Edit Tour" : "Create New Tour"}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -500,8 +536,9 @@ export default function AddTour() {
                   <FormItem className="w-full">
                     <FormLabel>Tour Image</FormLabel>
                     <MultipleImageUploader
-                      preview={editTourData.images || []}
-                      onChange={setImages}
+                      preview={oldImages}
+                      onChange={setNewImages}
+                      handleRemoveOld={handleRemoveOldImage}
                     />
                   </FormItem>
                 </div>
@@ -710,10 +747,10 @@ export default function AddTour() {
                 {loading
                   ? isEditing
                     ? "Updating..."
-                    : "Uploading..."
+                    : "Creating..."
                   : isEditing
                   ? "Update Tour"
-                  : "Upload Tour"}
+                  : "Create Tour"}
               </Button>
             </form>
           </Form>
