@@ -1,6 +1,7 @@
 import Choose from "@/components/modules/Home/Choose";
 import FeaturedTours from "@/components/modules/Home/FeaturedTours";
 import Hero from "@/components/modules/Home/Hero";
+import ReviewSection from "@/components/modules/Home/ReviewSection";
 import Stats from "@/components/modules/Home/Stats";
 
 export default function HomePage() {
@@ -10,6 +11,7 @@ export default function HomePage() {
       <Stats />
       <FeaturedTours />
       <Choose />
+      <ReviewSection />
     </div>
   );
 }
