@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -12,13 +12,6 @@ import {
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   useDeleteTourMutation,
   useGetToursQuery,
 } from "@/redux/features/tour/tour.api";
@@ -26,17 +19,32 @@ import { format } from "date-fns";
 import { PenIcon, Trash2 } from "lucide-react";
 import ButtonModal from "@/components/modules/Buttons/ButtonModal";
 import { toast } from "sonner";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
+import PaginationData from "@/utils/PaginationData";
 
 export default function AllTours() {
-  const [search, setSearch] = useState("");
-  const [, setTypeFilter] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [appliedSearch, setAppliedSearch] = useState("");
   const navigate = useNavigate();
+  const [page, setPage] = useState(1);
+  const limit = 5;
 
-  const { data } = useGetToursQuery(undefined);
+  const { data, isLoading } = useGetToursQuery({
+    page,
+    limit,
+    searchTerm: appliedSearch,
+  });
   const [deleteTour] = useDeleteTourMutation();
 
   const tours = data?.data || [];
+  const meta = data?.meta;
+
+  useEffect(() => {
+    if (searchTerm === "") {
+      setAppliedSearch("");
+      setPage(1);
+    }
+  }, [searchTerm]);
 
   const handleTourDelete = async (id: string) => {
     try {
@@ -48,32 +56,32 @@ export default function AllTours() {
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto">
+    <div className="w-full max-w-4xl mx-auto">
       <Card>
         <CardHeader>
-          <CardTitle>All Tours</CardTitle>
+          <CardTitle className="text-2xl font-bold">All Tours</CardTitle>
         </CardHeader>
         <CardContent>
           {/* Filters */}
-          <div className="flex flex-wrap gap-4 mb-4">
-            <Input
-              placeholder="Search tours..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="max-w-xs"
-            />
-            <Select onValueChange={setTypeFilter}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Filter by Type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All</SelectItem>
-                <SelectItem value="Trekking">Trekking</SelectItem>
-                <SelectItem value="Cruise">Cruise</SelectItem>
-                <SelectItem value="Beach">Beach</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button>Add New Tour</Button>
+          <div className="flex flex-col md:flex-row justify-between items-center gap-3 mb-4">
+            <div className="flex flex-col sm:flex-row w-full md:w-auto gap-2">
+              <Input
+                placeholder="Search tours"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full sm:w-[200px]"
+              />
+              <Button
+                onClick={() => setAppliedSearch(searchTerm)}
+                disabled={!searchTerm.trim()}
+                className="w-full sm:w-auto"
+              >
+                Search
+              </Button>
+            </div>
+            <Button className="md:inline-block hidden" asChild>
+              <Link to="/admin/add-tour">Add</Link>
+            </Button>
           </div>
 
           {/* Table */}
@@ -101,7 +109,7 @@ export default function AllTours() {
                         className="w-12 h-12 object-cover rounded border"
                       />
                     </TableCell>
-                    <TableCell>{tour.title}</TableCell>
+                    <TableCell className="whitespace-nowrap">{tour.title}</TableCell>
                     <TableCell>{tour.tourType.name}</TableCell>
                     <TableCell>{tour.division.name}</TableCell>
                     <TableCell>{format(tour.startDate, "PP")}</TableCell>
@@ -144,6 +152,13 @@ export default function AllTours() {
               )}
             </TableBody>
           </Table>
+          {!isLoading && meta && meta.totalPage > 1 && (
+            <PaginationData
+              currentPage={page}
+              totalPages={meta.totalPage}
+              onPageChange={(p) => setPage(p)}
+            />
+          )}
         </CardContent>
       </Card>
     </div>
