@@ -34,6 +34,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { useUpdateUserMutation } from "@/redux/features/user/user";
 import { ProfileLoading } from "@/components/modules/Profile/ProfileLoading";
+import SetPassword from "@/components/modules/Authentication/SetPassword";
+import type { IAuthProvider } from "@/types/auth.type";
+import ProfilePicture from "@/assets/images/profileImage.png"
 
 const profileSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -45,10 +48,11 @@ const profileSchema = z.object({
 export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | "">("");
 
   const { data: userInfo, isLoading } = useUserInfoQuery(undefined);
   const [updateUser] = useUpdateUserMutation();
+  console.log(userInfo);
 
   const form = useForm<z.infer<typeof profileSchema>>({
     resolver: zodResolver(profileSchema),
@@ -66,7 +70,11 @@ export default function ProfilePage() {
         phone: userInfo.phone || "",
         address: userInfo.address || "",
       });
-      setPreviewImage(userInfo.picture || null);
+      if (userInfo.picture) {
+        setPreviewImage(userInfo.picture);
+      } else {
+        setPreviewImage("");
+      }
     }
   }, [userInfo, form]);
 
@@ -114,7 +122,7 @@ export default function ProfilePage() {
       phone: userInfo?.phone || "",
       address: userInfo?.address || "",
     });
-    setPreviewImage(userInfo.picture || null);
+    setPreviewImage(userInfo.picture || "");
     setIsEditing(false);
   };
 
@@ -126,7 +134,7 @@ export default function ProfilePage() {
         <div className="flex flex-col md:flex-row items-center gap-4 sm:gap-3">
           <div className="relative">
             <img
-              src={previewImage || "/default-avatar.png"}
+              src={previewImage || ProfilePicture}
               alt={userInfo.name}
               className="h-24 w-24 border rounded-full object-cover"
             />
@@ -225,7 +233,7 @@ export default function ProfilePage() {
                 {/* Email (read-only) */}
                 <div className="space-y-2">
                   <Label>Email Address</Label>
-                  <div className="flex items-center gap-2 p-2 border rounded-md bg-muted/30">
+                  <div className="flex flex-wrap items-center gap-2 p-2 border rounded-md bg-muted/30">
                     <Mail className="h-4 w-4 text-muted-foreground" />
                     <p className="text-sm font-medium">{userInfo.email}</p>
                     {userInfo.isVerified ? (
@@ -308,7 +316,13 @@ export default function ProfilePage() {
         </Card>
 
         {/* Authentication Methods */}
-        <ChangePassword />
+        {userInfo?.auths?.some(
+          (a: IAuthProvider) => a.provider === "Credential"
+        ) ? (
+          <ChangePassword />
+        ) : (
+          <SetPassword />
+        )}
       </div>
     </section>
   );

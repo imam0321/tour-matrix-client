@@ -1,4 +1,5 @@
-import { useState } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -11,108 +12,135 @@ import {
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-
-interface Tour {
-  id: string;
-  name: string;
-  type: string;
-  startDate: string;
-  endDate: string;
-  price: number;
-}
+  useDeleteTourMutation,
+  useGetToursQuery,
+} from "@/redux/features/tour/tour.api";
+import { format } from "date-fns";
+import { PenIcon, Trash2 } from "lucide-react";
+import ButtonModal from "@/components/modules/Buttons/ButtonModal";
+import { toast } from "sonner";
+import { Link, useNavigate } from "react-router";
+import PaginationData from "@/utils/PaginationData";
 
 export default function AllTours() {
-  const [search, setSearch] = useState("");
-  const [typeFilter, setTypeFilter] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [appliedSearch, setAppliedSearch] = useState("");
+  const navigate = useNavigate();
+  const [page, setPage] = useState(1);
+  const limit = 5;
 
-  const tours: Tour[] = [
-    {
-      id: "1",
-      name: "Everest Adventure",
-      type: "Trekking",
-      startDate: "2025-09-01",
-      endDate: "2025-09-10",
-      price: 1200,
-    },
-    {
-      id: "2",
-      name: "Sundarbans Cruise",
-      type: "Cruise",
-      startDate: "2025-10-05",
-      endDate: "2025-10-08",
-      price: 800,
-    },
-    {
-      id: "3",
-      name: "Cox’s Bazar Retreat",
-      type: "Beach",
-      startDate: "2025-11-12",
-      endDate: "2025-11-15",
-      price: 500,
-    },
-  ];
+  const { data, isLoading } = useGetToursQuery({
+    page,
+    limit,
+    searchTerm: appliedSearch,
+  });
+  const [deleteTour] = useDeleteTourMutation();
 
-  const filteredTours = tours.filter(
-    (tour) =>
-      tour.name.toLowerCase().includes(search.toLowerCase()) &&
-      (typeFilter === "" || tour.type === typeFilter)
-  );
+  const tours = data?.data || [];
+  const meta = data?.meta;
+
+  useEffect(() => {
+    if (searchTerm === "") {
+      setAppliedSearch("");
+      setPage(1);
+    }
+  }, [searchTerm]);
+
+  const handleTourDelete = async (id: string) => {
+    try {
+      await deleteTour(id);
+      toast.success("Tour Delete successfully");
+    } catch (error: any) {
+      toast.error(error.data.message);
+    }
+  };
 
   return (
-    <div className="p-6">
+    <div className="w-full max-w-4xl mx-auto">
       <Card>
         <CardHeader>
-          <CardTitle>Tour Matrix</CardTitle>
+          <CardTitle className="text-2xl font-bold">All Tours</CardTitle>
         </CardHeader>
         <CardContent>
           {/* Filters */}
-          <div className="flex flex-wrap gap-4 mb-4">
-            <Input
-              placeholder="Search tours..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="max-w-xs"
-            />
-            <Select onValueChange={setTypeFilter}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Filter by Type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All</SelectItem>
-                <SelectItem value="Trekking">Trekking</SelectItem>
-                <SelectItem value="Cruise">Cruise</SelectItem>
-                <SelectItem value="Beach">Beach</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button>Add New Tour</Button>
+          <div className="flex flex-col md:flex-row justify-between items-center gap-3 mb-4">
+            <div className="flex flex-col sm:flex-row w-full md:w-auto gap-2">
+              <Input
+                placeholder="Search tours"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full sm:w-[200px]"
+              />
+              <Button
+                onClick={() => setAppliedSearch(searchTerm)}
+                disabled={!searchTerm.trim()}
+                className="w-full sm:w-auto"
+              >
+                Search
+              </Button>
+            </div>
+            <Button className="md:inline-block hidden" asChild>
+              <Link to="/admin/add-tour">Add</Link>
+            </Button>
           </div>
 
           {/* Table */}
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead>Cover</TableHead>
                 <TableHead>Tour Name</TableHead>
                 <TableHead>Type</TableHead>
+                <TableHead>Division</TableHead>
                 <TableHead>Start Date</TableHead>
                 <TableHead>End Date</TableHead>
-                <TableHead>Price ($)</TableHead>
+                <TableHead>Price</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredTours.length > 0 ? (
-                filteredTours.map((tour) => (
-                  <TableRow key={tour.id}>
-                    <TableCell>{tour.name}</TableCell>
-                    <TableCell>{tour.type}</TableCell>
-                    <TableCell>{tour.startDate}</TableCell>
-                    <TableCell>{tour.endDate}</TableCell>
-                    <TableCell>{tour.price}</TableCell>
+              {tours?.length > 0 ? (
+                tours?.map((tour) => (
+                  <TableRow key={tour._id}>
+                    <TableCell>
+                      <img
+                        src={tour.images[0] || "Tour"}
+                        alt="DV"
+                        className="w-12 h-12 object-cover rounded border"
+                      />
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap">{tour.title}</TableCell>
+                    <TableCell>{tour.tourType.name}</TableCell>
+                    <TableCell>{tour.division.name}</TableCell>
+                    <TableCell>{format(tour.startDate, "PP")}</TableCell>
+                    <TableCell>{format(tour.endDate, "PP")}</TableCell>
+                    <TableCell>{tour.costFrom}</TableCell>
+                    <TableCell>
+                      <div className="flex justify-end items-center gap-2">
+                        <Button
+                          size="sm"
+                          className="bg-muted text-muted-foreground"
+                          onClick={() =>
+                            navigate("/admin/add-tour", {
+                              state: { tourData: tour },
+                            })
+                          }
+                        >
+                          <PenIcon />
+                        </Button>
+                        <ButtonModal
+                          actionName={
+                            <Button size="sm">
+                              <Trash2 />
+                            </Button>
+                          }
+                          title="Delete Tour"
+                          description="Are you sure delete this tour?"
+                          confirmHandler={handleTourDelete}
+                          id={tour._id}
+                        ></ButtonModal>
+                      </div>
+                    </TableCell>
                   </TableRow>
                 ))
               ) : (
@@ -124,6 +152,13 @@ export default function AllTours() {
               )}
             </TableBody>
           </Table>
+          {!isLoading && meta && meta.totalPage > 1 && (
+            <PaginationData
+              currentPage={page}
+              totalPages={meta.totalPage}
+              onPageChange={(p) => setPage(p)}
+            />
+          )}
         </CardContent>
       </Card>
     </div>

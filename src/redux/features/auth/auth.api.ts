@@ -8,6 +8,7 @@ import type {
   ISendOtp,
   IVerifyOtp,
 } from "@/types";
+import type { User } from "@/types/auth.type";
 
 export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -38,6 +39,13 @@ export const authApi = baseApi.injectEndpoints({
         data: payload,
       }),
     }),
+    setPassword: builder.mutation<IResponse<null>, { password: string }>({
+      query: (password) => ({
+        url: "/auth/set-password",
+        method: "POST",
+        data: password,
+      }),
+    }),
     sendOtp: builder.mutation<IResponse<null>, ISendOtp>({
       query: (userInfo) => ({
         url: "/otp/send",
@@ -52,12 +60,12 @@ export const authApi = baseApi.injectEndpoints({
         data: userInfo,
       }),
     }),
-    userInfo: builder.query({
+    userInfo: builder.query<User, unknown>({
       query: () => ({
         url: "/user/me",
         method: "GET",
       }),
-      transformResponse: (res) => res.data,
+      transformResponse: (res: { data: User }) => res.data,
       providesTags: ["USER"]
     }),
   }),
@@ -67,6 +75,7 @@ export const {
   useLoginMutation,
   useRegisterMutation,
   useChangePasswordMutation,
+  useSetPasswordMutation,
   useSendOtpMutation,
   useVerifyOtpMutation,
   useLogoutMutation,

@@ -96,8 +96,8 @@ export default function UpcomingBookings({
           Upcoming Bookings
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <ScrollArea className="h-96 rounded-md">
+      <CardContent className="md:p-4 p-2">
+        <ScrollArea className="h-96 sm:h-[500px] md:h-[600px] rounded-md">
           <div className="space-y-4">
             {upcomingBookings.length === 0 ? (
               <div>Upcoming Booking not found</div>

@@ -27,10 +27,11 @@ export interface User {
   name: string;
   email: string;
   role: TRole;
+  picture?: string;
   isDeleted: boolean;
   isActive: TIsActive;
   isVerified: boolean;
-  auths: IAuthProvider;
+  auths: IAuthProvider[];
   createdAt: string;
   updatedAt: string;
   phone?: string;
@@ -49,14 +50,13 @@ export interface IUserUpdate {
   address?: string;
 }
 
-
-
 export interface IRegisterResponse {
   _id: string;
   name: string;
   email: string;
   password: string;
   role: TRole;
+  picture?: string;
   isDeleted: boolean;
   isActive: TIsActive;
   isVerified: boolean;
