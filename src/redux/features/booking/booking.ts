@@ -8,7 +8,7 @@ export const bookingApi = baseApi.injectEndpoints({
       { tour: string; guestCount: number }
     >({
       query: (bookingData) => ({
-        url: "booking",
+        url: "/booking",
         method: "POST",
         data: bookingData,
       }),

@@ -1,8 +1,9 @@
 import { baseApi } from "@/redux/baseApi";
+import type { BookingStats, IResponse, PaymentStats, TourStats, UserStats } from "@/types";
 
 export const statsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getUserStat: builder.query({
+    getUserStat: builder.query<IResponse<UserStats>, undefined>({
       query: () => ({
         url: "/stats/user",
         method: "GET",
@@ -10,7 +11,7 @@ export const statsApi = baseApi.injectEndpoints({
       providesTags: ["USER"],
     }),
 
-    getTourStat: builder.query({
+    getTourStat: builder.query<IResponse<TourStats>, undefined>({
       query: () => ({
         url: "/stats/tour",
         method: "GET",
@@ -18,7 +19,7 @@ export const statsApi = baseApi.injectEndpoints({
       providesTags: ["TOUR"],
     }),
 
-    getBookingStat: builder.query({
+    getBookingStat: builder.query<IResponse<BookingStats>, undefined>({
       query: () => ({
         url: "/stats/booking",
         method: "GET",
@@ -26,7 +27,7 @@ export const statsApi = baseApi.injectEndpoints({
       providesTags: ["BOOKING"],
     }),
 
-    getPaymentStat: builder.query({
+    getPaymentStat: builder.query<IResponse<PaymentStats>, undefined>({
       query: () => ({
         url: "/stats/payment",
         method: "GET",
