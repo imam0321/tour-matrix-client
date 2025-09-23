@@ -15,10 +15,6 @@ export const paymentApi = baseApi.injectEndpoints({
         method: "GET",
       }),
     }),
-
-
-
-
   }),
 });
 

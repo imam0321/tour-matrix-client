@@ -76,7 +76,7 @@ export default function TourTypeForm({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="flex justify-between items-center mt-4 mb-2 relative"
+        className="flex justify-between items-center mb-4 relative"
       >
         <FormField
           control={form.control}

@@ -23,7 +23,7 @@ export default function AllDivision({
   meta,
 }: IAllDivisionProps) {
   return (
-    <div className="px-2 border border-muted rounded mt-4">
+    <div>
       <Table>
         <TableHeader className="px-10">
           <TableRow>

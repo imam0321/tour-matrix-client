@@ -3,18 +3,14 @@ import {
   useDeleteTourTypeMutation,
   useGetTourTypesQuery,
 } from "@/redux/features/tour/tourType.api";
-import {
-  Table,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { ITourTypeResponse } from "@/types";
 import { useState } from "react";
 import TourTypeForm from "@/components/modules/Admin/TourTypes/TourTypeForm";
 import { toast } from "sonner";
 import AllTourTypes from "@/components/modules/Admin/TourTypes/AllTourTypes";
 import PaginationData from "@/utils/PaginationData";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function AddTourType() {
   const [editTourType, setEditTourType] = useState<ITourTypeResponse | null>(
@@ -37,37 +33,39 @@ export default function AddTourType() {
 
   return (
     <div className="w-full max-w-3xl h-screen mx-auto">
-      <h1 className="text-2xl font-bold ">Tour Types</h1>
-      <div>
-        <TourTypeForm
-          initialData={editTourType}
-          onComplete={() => setEditTourType(null)}
-        />
-      </div>
-      <div className="px-2 border border-muted rounded ">
-        <Table>
-          <TableHeader className="px-10">
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <AllTourTypes
-            isLoading={isLoading}
-            tourTypes={data?.data}
-            onEditTourType={setEditTourType}
-            onTourTypeDelete={handleTourTypeDelete}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-2xl font-bold">Tour Types</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <TourTypeForm
+            initialData={editTourType}
+            onComplete={() => setEditTourType(null)}
           />
-        </Table>
-        {/* Pagination */}
-        <div className="pb-2 mt-0">
-          <PaginationData
-            currentPage={page}
-            totalPages={data?.meta?.totalPage as number}
-            onPageChange={(p) => setPage(p)}
-          />
-        </div>
-      </div>
+          <Table>
+            <TableHeader className="px-10">
+              <TableRow>
+                <TableHead>Name</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <AllTourTypes
+              isLoading={isLoading}
+              tourTypes={data?.data}
+              onEditTourType={setEditTourType}
+              onTourTypeDelete={handleTourTypeDelete}
+            />
+          </Table>
+          {/* Pagination */}
+          <div className="pb-2 mt-0">
+            <PaginationData
+              currentPage={page}
+              totalPages={data?.meta?.totalPage as number}
+              onPageChange={(p) => setPage(p)}
+            />
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

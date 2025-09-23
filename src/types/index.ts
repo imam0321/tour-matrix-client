@@ -13,6 +13,7 @@ export type {
 
 export type { ITourResponse, ITourType, ITourTypeResponse, IDivision, IDivisionResponse } from "./tour.type";
 export type { IBookingResponse, IBooking, TBookingStatus, IBookingData } from './booking.type';
+export type { UserStats, TourStats, BookingStats, PaymentStats } from "./stats.type"
 
 export interface IResponse<T> {
   statusCode: number;

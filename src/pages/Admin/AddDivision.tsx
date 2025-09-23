@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import AllDivision from "@/components/modules/Admin/Division/AllDivision";
 import DivisionForm from "@/components/modules/Admin/Division/DivisionForm";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   useDeleteDivisionMutation,
   useGetDivisionsQuery,
@@ -36,24 +37,28 @@ export default function AddDivision() {
 
   return (
     <div className="w-full max-w-3xl mx-auto">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold ">Division</h1>
-        <DivisionForm
-          initialData={editDivision}
-          open={formOpen}
-          setOpen={setFormOpen}
-          onComplete={() => setEditDivision(null)}
-        />
-      </div>
-      <AllDivision
-        isLoading={isLoading}
-        divisions={data?.data}
-        onEditDivision={handleEditDivision}
-        onDivisionDelete={handleDivisionDelete}
-        page={page}
-        setPage={setPage}
-        meta={data?.meta}
-      />
+      <Card>
+        <CardHeader className="flex justify-between items-center">
+          <CardTitle className="text-2xl font-bold">Division</CardTitle>
+          <DivisionForm
+            initialData={editDivision}
+            open={formOpen}
+            setOpen={setFormOpen}
+            onComplete={() => setEditDivision(null)}
+          />
+        </CardHeader>
+        <CardContent>
+          <AllDivision
+            isLoading={isLoading}
+            divisions={data?.data}
+            onEditDivision={handleEditDivision}
+            onDivisionDelete={handleDivisionDelete}
+            page={page}
+            setPage={setPage}
+            meta={data?.meta}
+          />
+        </CardContent>
+      </Card>
     </div>
   );
 }
