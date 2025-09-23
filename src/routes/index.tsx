@@ -9,6 +9,7 @@ import { withAuth } from "@/utils/withAuth";
 import { role } from "@/constants/role";
 import type { TRole } from "@/types/auth.type";
 import HomePage from "@/pages/HomePage";
+import ReviewSection from "@/components/modules/Home/ReviewSection";
 const About = lazy(() => import("@/pages/About"));
 const Login = lazy(() => import("@/pages/Login"));
 const Register = lazy(() => import("@/pages/Register"));
@@ -36,6 +37,10 @@ export const router = createBrowserRouter([
       {
         Component: About,
         path: "/about",
+      },
+      {
+        Component: ReviewSection,
+        path: "/reviews",
       },
       {
         Component: ToursPage,

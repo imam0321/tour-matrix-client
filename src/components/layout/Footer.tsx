@@ -11,6 +11,7 @@ import { useUserInfoQuery } from "@/redux/features/auth/auth.api";
 const navigationLinks = [
   { href: "/", label: "Home", role: "PUBLIC" },
   { href: "/tours", label: "Tours", role: "PUBLIC" },
+  { href: "/reviews", label: "Reviews", role: "PUBLIC" },
   { href: "/about", label: "About", role: "PUBLIC" },
   { href: "/admin", label: "Dashboard", role: role.superAdmin },
   { href: "/admin", label: "Dashboard", role: role.admin },
@@ -41,7 +42,7 @@ export default function Footer() {
 
         {/* Description */}
         <p className="mx-auto mt-4 sm:mt-6 max-w-md text-center text-sm sm:text-base leading-relaxed text-accent-foreground">
-          Discover unforgettable journeys with Tour Matrix – your gateway to
+          Discover unforgettable journeys with Tour Matrix your gateway to
           adventure and comfort.
         </p>
 

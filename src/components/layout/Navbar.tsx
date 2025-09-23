@@ -20,6 +20,7 @@ import LogoutButton from "../modules/Buttons/LogoutButton";
 const navigationLinks = [
   { href: "/", label: "Home", role: "PUBLIC" },
   { href: "/tours", label: "Tours", role: "PUBLIC" },
+  { href: "/reviews", label: "Reviews", role: "PUBLIC" },
   { href: "/about", label: "About", role: "PUBLIC" },
   { href: "/admin", label: "Dashboard", role: role.superAdmin },
   { href: "/admin", label: "Dashboard", role: role.admin },

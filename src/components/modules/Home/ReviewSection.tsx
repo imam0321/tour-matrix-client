@@ -91,7 +91,7 @@ export default function ReviewSection() {
             {reviews.map((review) => (
               <CarouselItem
                 key={review.id}
-                className="basis-full sm:basis-1/2 lg:basis-1/3 px-2"
+                className="basis-full sm:basis-1/2 lg:basis-1/3 px-2 py-2"
               >
                 <Card className="h-full shadow-md rounded-2xl border hover:shadow-lg hover:scale-[1.02] transition-transform duration-200">
                   <CardHeader className="flex flex-row items-center gap-3">
