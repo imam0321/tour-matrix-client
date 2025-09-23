@@ -1,7 +1,7 @@
 import { lazy } from "react";
 import type { ISidebarItem } from "@/types";
 const BookingHistory = lazy(() => import("@/pages/User/BookingHistory"));
-import ProfilePage from "@/pages/ProfilePage"
+const ProfilePage = lazy(() => import("@/pages/ProfilePage"));
 
 export const userSidebarItems: ISidebarItem[] = [
   {

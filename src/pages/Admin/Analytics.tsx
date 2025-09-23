@@ -88,7 +88,8 @@ export default function Analytics() {
               <UsersChart
                 data={userStats?.usersByRole || []}
                 colors={COLORS}
-                chartConfig={chartConfig}
+                  chartConfig={chartConfig}
+                  isLoading={userLoading}
               />
             )}
 

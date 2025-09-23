@@ -12,14 +12,14 @@ export const adminSidebarItems: ISidebarItem[] = [
     title: "Dashboard",
     items: [
       {
-        title: "Analytics",
-        url: "/admin/analytics",
-        component: Analytics,
-      },
-      {
         title: "Profile",
         url: "/admin/me",
         component: ProfilePage,
+      },
+      {
+        title: "Analytics",
+        url: "/admin/analytics",
+        component: Analytics,
       },
     ],
   },
