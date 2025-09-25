@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,14 +13,20 @@ import {
 import { Button } from "@/components/ui/button";
 import { authApi, useLogoutMutation } from "@/redux/features/auth/auth.api";
 import { useAppDispatch } from "@/redux/hook";
+import { toast } from "sonner";
 
 export default function LogoutButton() {
   const [logout] = useLogoutMutation();
   const dispatch = useAppDispatch();
 
   const handleLogout = async () => {
-    await logout(undefined);
-    dispatch(authApi.util.resetApiState());
+    try {
+      await logout(undefined);
+      dispatch(authApi.util.resetApiState());
+      toast.success("logout successfully");
+    } catch (error: any) {
+      toast.error(error.data.message);
+    }
   };
   return (
     <AlertDialog>
