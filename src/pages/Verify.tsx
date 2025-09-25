@@ -119,7 +119,7 @@ export default function Verify() {
         </h1>
       </Link>
       {confirmed ? (
-        <Card className="container mx-auto ">
+        <Card className="container mx-auto">
           <CardHeader>
             <CardTitle>Verify your email address</CardTitle>
             <CardDescription>

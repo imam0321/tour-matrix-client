@@ -11,6 +11,7 @@ import type { TRole } from "@/types/auth.type";
 import HomePage from "@/pages/HomePage";
 import ReviewSection from "@/components/modules/Home/ReviewSection";
 import ForgetPasswordPage from "@/pages/ForgetPasswordPage";
+import ResetPassword from "@/components/modules/Authentication/ResetPassword";
 const About = lazy(() => import("@/pages/About"));
 const Login = lazy(() => import("@/pages/Login"));
 const Register = lazy(() => import("@/pages/Register"));
@@ -96,6 +97,10 @@ export const router = createBrowserRouter([
   {
     Component: ForgetPasswordPage,
     path: "/forget-password",
+  },
+  {
+    Component: ResetPassword,
+    path: "/reset-password",
   },
   {
     Component: Verify,
