@@ -1,16 +1,25 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router";
-import heroImage from "@/assets/images/hero.jpg";
+
+const heroImageUrl =
+  "https://res.cloudinary.com/dzmvhztng/image/upload/v1758403824/jhewhr1q24-1758403820873-hero-jpg.jpg.jpg"; 
+const heroBlurUrl =
+  "https://res.cloudinary.com/dzmvhztng/image/upload/w_100,q_10,f_auto/jhewhr1q24-1758403820873-hero-jpg.jpg"; 
 
 
 export default function Hero() {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${heroImage})` }}
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-700 filter blur-xl scale-105"
+        style={{ backgroundImage: `url(${heroBlurUrl})` }}
       />
+      <div
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-1000"
+        style={{ backgroundImage: `url(${heroImageUrl})` }}
+      />
+      <img src={heroImageUrl} alt="hero" className="hidden" loading="eager" />
       <div className="absolute inset-0 bg-black/40" />
 
       <div className="relative z-10 text-center max-w-4xl mx-auto px-4">

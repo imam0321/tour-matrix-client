@@ -21,6 +21,7 @@ import ButtonModal from "@/components/modules/Buttons/ButtonModal";
 import { toast } from "sonner";
 import { Link, useNavigate } from "react-router";
 import PaginationData from "@/utils/PaginationData";
+import AdminAllToursLoading from "@/components/modules/Admin/Tours/AminAllToursLoading";
 
 export default function AllTours() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -54,6 +55,10 @@ export default function AllTours() {
       toast.error(error.data.message);
     }
   };
+
+  if (isLoading) {
+    return <AdminAllToursLoading />;
+  }
 
   return (
     <div className="w-full max-w-4xl mx-auto">
@@ -109,7 +114,9 @@ export default function AllTours() {
                         className="w-12 h-12 object-cover rounded border"
                       />
                     </TableCell>
-                    <TableCell className="whitespace-nowrap">{tour.title}</TableCell>
+                    <TableCell className="whitespace-nowrap">
+                      {tour.title}
+                    </TableCell>
                     <TableCell>{tour.tourType.name}</TableCell>
                     <TableCell>{tour.division.name}</TableCell>
                     <TableCell>{format(tour.startDate, "PP")}</TableCell>

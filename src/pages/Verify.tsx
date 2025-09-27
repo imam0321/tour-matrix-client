@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import Logo from "@/assets/icons/Logo";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -27,10 +26,11 @@ import {
   useSendOtpMutation,
   useVerifyOtpMutation,
 } from "@/redux/features/auth/auth.api";
+import LogoWithTitle from "@/utils/LogoWithTitle";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link, useLocation, useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { toast } from "sonner";
 import z from "zod";
 
@@ -109,15 +109,7 @@ export default function Verify() {
 
   return (
     <div className="grid place-content-center h-screen">
-      <Link
-        to="/"
-        className="absolute top-4 left-4 flex items-center gap-1 text-primary hover:text-primary/90"
-      >
-        <Logo />
-        <h1 className="font-bold lg:text-xl text-blue-400">
-          Tour<span className="text-primary ml-1">Matrix</span>
-        </h1>
-      </Link>
+      <LogoWithTitle />
       {confirmed ? (
         <Card className="container mx-auto">
           <CardHeader>

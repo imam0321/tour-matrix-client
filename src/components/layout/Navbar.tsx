@@ -101,6 +101,7 @@ export default function Navbar() {
             <Link
               to="/"
               className="flex items-center gap-1 text-primary hover:text-primary/90"
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             >
               <Logo />
               <h1 className="font-bold lg:text-xl hidden md:inline-flex">

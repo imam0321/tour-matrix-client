@@ -51,7 +51,7 @@ export default function TourDetailHero({
   const days = differenceInDays(end, start) + 1;
 
   return (
-    <div className="relative h-40 overflow-hidden">
+    <div className="relative h-50 overflow-hidden">
       <div
         className="flex w-full h-full transition-transform duration-1000 ease-in-out"
         style={{ transform: `translateX(-${current * 100}%)` }}
@@ -75,7 +75,7 @@ export default function TourDetailHero({
             <MapPin className="w-5 h-5" />
             <span>{location}</span>
           </div>
-          <h1 className="text-4xl font-bold mb-4">{title}</h1>
+          <h1 className="md:text-4xl text-2xl font-bold mb-4">{title}</h1>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-1">
               <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />

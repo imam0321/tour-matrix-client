@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import Logo from "@/assets/icons/Logo";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -27,6 +26,7 @@ import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForgetPasswordMutation } from "@/redux/features/auth/auth.api";
 import { CheckCircle2 } from "lucide-react";
+import LogoWithTitle from "@/utils/LogoWithTitle";
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -55,15 +55,7 @@ export default function ForgetPasswordPage() {
   return (
     <div className="grid place-content-center h-screen">
       {/* Logo link */}
-      <Link
-        to="/"
-        className="absolute top-4 left-4 flex items-center gap-1 text-primary hover:text-primary/90"
-      >
-        <Logo />
-        <h1 className="font-bold lg:text-xl text-blue-400">
-          Tour<span className="text-primary ml-1">Matrix</span>
-        </h1>
-      </Link>
+      <LogoWithTitle />
 
       {/* ✅ Conditional Rendering */}
       {!success ? (
