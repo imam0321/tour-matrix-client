@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import LoginCover from "@/assets/images/login-cover.jpg";
 import { Link, useLocation, useNavigate } from "react-router";
 import {
   Form,
@@ -193,9 +192,15 @@ export default function LoginForm({
           </Form>
           <div className="bg-muted relative hidden md:block">
             <img
-              src={LoginCover}
-              alt="Image"
-              className="absolute inset-0 h-full w-full"
+              src="https://res.cloudinary.com/dzmvhztng/image/upload/w_50,q_10,f_auto/v1758979196/login-cover_b5skd7.jpg"
+              alt="Login Cover Blur"
+              className="absolute inset-0 h-full w-full object-cover blur-xl scale-105"
+            />
+            <img
+              src="https://res.cloudinary.com/dzmvhztng/image/upload/w_800,f_auto,q_auto/v1758979196/login-cover_b5skd7.jpg"
+              alt="Login Cover"
+              className="absolute inset-0 h-full w-full object-cover transition-opacity duration-700"
+              loading="lazy"
             />
           </div>
         </CardContent>

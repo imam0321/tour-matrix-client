@@ -45,19 +45,19 @@ export default function HomeTourCard({ tour }: TourCardProps) {
             : tour.title}
         </h3>
         <p className="text-gray-400 text-sm mb-4">
-          {tour?.description.length > 65
-            ? tour.description.slice(0, 65) + "..."
+          {tour?.description.length > 80
+            ? tour.description.slice(0, 80) + "..."
             : tour.description}
         </p>
 
-        <div className="flex items-center gap-x-1 text-sm text-gray-500 mb-2">
+        <div className="flex items-center gap-x-1 text-sm text-muted-foreground mb-2">
           <Calendar className="w-4 h-4" />
           <p>
             {format(tour?.startDate, "PP")} → {format(tour?.endDate, "PP")}
           </p>
         </div>
 
-        <div className="flex items-center gap-x-1 text-sm text-gray-500 ">
+        <div className="flex items-center gap-x-1 text-sm text-muted-foreground">
           <MapPin className="w-4 h-4" />
           <p>Dhaka → {tour?.location}</p>
         </div>

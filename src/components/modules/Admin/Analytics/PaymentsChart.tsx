@@ -31,7 +31,7 @@ export default function PaymentsChart({
                 data={data}
                 dataKey="count"
                 nameKey="_id"
-                outerRadius="80%"
+                outerRadius="60%"
                 label={({ name, percent }) =>
                   `${name} ${(percent * 100).toFixed(0)}%`
                 }
