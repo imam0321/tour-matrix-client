@@ -38,13 +38,17 @@ export default function ToursPage() {
         {isLoading ? <FilterToursLoading /> : <FilterTours />}
 
         <main className="flex-1 space-y-4">
-          {isLoading || isFetching
-            ? Array.from({ length: 4 }).map((_, i) => (
-                <TourCardLoading key={i} />
-              ))
-            : data?.data.map((tour: ITourResponse) => (
-                <TourCard key={tour._id} tour={tour} />
-              ))}
+          {isLoading || isFetching ? (
+            Array.from({ length: 4 }).map((_, i) => <TourCardLoading key={i} />)
+          ) : data?.data && data.data.length > 0 ? (
+            data.data.map((tour: ITourResponse) => (
+              <TourCard key={tour._id} tour={tour} />
+            ))
+          ) : (
+            <div className="text-center py-8 text-gray-500">
+              No tours found.
+            </div>
+          )}
           {!isLoading && meta && meta.totalPage > 1 && (
             <PaginationData
               currentPage={page}

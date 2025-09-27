@@ -10,8 +10,8 @@ import { role } from "@/constants/role";
 import type { TRole } from "@/types/auth.type";
 import HomePage from "@/pages/HomePage";
 import ReviewSection from "@/components/modules/Home/ReviewSection";
-import ForgetPasswordPage from "@/pages/ForgetPasswordPage";
-import ResetPassword from "@/components/modules/Authentication/ResetPassword";
+import NotFoundPage from "@/pages/NotFoundPage";
+import Unauthorized from "@/pages/Unauthorized";
 const About = lazy(() => import("@/pages/About"));
 const Login = lazy(() => import("@/pages/Login"));
 const Register = lazy(() => import("@/pages/Register"));
@@ -21,10 +21,13 @@ const DashboardLayout = lazy(
 const ToursPage = lazy(() => import("@/pages/ToursPage"));
 const TourDetailsPage = lazy(() => import("@/pages/TourDetailsPage"));
 const BookingPage = lazy(() => import("@/pages/BookingPage"));
-const Unauthorized = lazy(() => import("@/pages/Unauthorized"));
 const Success = lazy(() => import("@/pages/Payment/Success"));
 const Fail = lazy(() => import("@/pages/Payment/Fail"));
 const Cancel = lazy(() => import("@/pages/Payment/Cancel"));
+const ForgetPasswordPage = lazy(() => import("@/pages/ForgetPasswordPage"));
+const ResetPassword = lazy(
+  () => import("@/components/modules/Authentication/ResetPassword")
+);
 
 export const router = createBrowserRouter([
   {
@@ -109,5 +112,9 @@ export const router = createBrowserRouter([
   {
     Component: Unauthorized,
     path: "/unauthorized",
+  },
+  {
+    Component: NotFoundPage,
+    path: "*",
   },
 ]);

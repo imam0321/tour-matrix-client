@@ -52,7 +52,6 @@ export default function ProfilePage() {
 
   const { data: userInfo, isLoading } = useUserInfoQuery(undefined);
   const [updateUser] = useUpdateUserMutation();
-  console.log(userInfo);
 
   const form = useForm<z.infer<typeof profileSchema>>({
     resolver: zodResolver(profileSchema),
