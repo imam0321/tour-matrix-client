@@ -7,7 +7,6 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Link } from "react-router";
-import AboutCover from "@/assets/images/aboutCover.png";
 
 export default function About() {
   return (
@@ -45,7 +44,7 @@ export default function About() {
               </CardHeader>
               <CardContent>
                 <img
-                  src={AboutCover}
+                  src="https://res.cloudinary.com/dzmvhztng/image/upload/v1758981556/aboutCover_pjrpsm.png"
                   alt="Travel illustration"
                   className="w-full h-64 object-cover rounded-lg"
                 />
