@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import LoginCover from "@/assets/images/register-cover.avif";
 import { Link, useNavigate } from "react-router";
 import {
   Form,
@@ -32,15 +31,6 @@ const formSchema = z
     password: z
       .string({ error: "Password must be string" })
       .min(8, { error: "Password must be at least 8 characters long." }),
-    // .regex(/^(?=.*[A-Z])/, {
-    //   message: "Password must contain at least 1 uppercase letter.",
-    // })
-    // .regex(/^(?=.*[!@#$%^&*])/, {
-    //   message: "Password must contain at least 1 special character.",
-    // })
-    // .regex(/^(?=.*\d)/, {
-    //   message: "Password must contain at least 1 number.",
-    // }),
     confirmPassword: z
       .string({ error: "Password must be string" })
       .min(8, { error: "Password must be at least 8 characters long." }),
@@ -90,9 +80,15 @@ export default function RegisterForm({
         <CardContent className="grid p-0 md:grid-cols-2">
           <div className="bg-muted relative hidden md:block">
             <img
-              src={LoginCover}
-              alt="Image"
-              className="absolute inset-0 h-full w-full"
+              src="https://res.cloudinary.com/dzmvhztng/image/upload/w_50,q_10,f_auto/v1758979876/register-cover_ylncgl.avif"
+              alt="Register Cover Blur"
+              className="absolute inset-0 h-full w-full object-cover blur-xl scale-105"
+            />
+            <img
+              src="https://res.cloudinary.com/dzmvhztng/image/upload/w_800,f_auto,q_auto/v1758979876/register-cover_ylncgl.avif"
+              alt="Register Cover"
+              className="absolute inset-0 h-full w-full object-cover transition-opacity duration-700"
+              loading="lazy"
             />
           </div>
           <Form {...form}>
