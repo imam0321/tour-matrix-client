@@ -1,4 +1,11 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useRef } from "react";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Carousel,
   CarouselContent,
@@ -8,6 +15,7 @@ import {
 } from "@/components/ui/carousel";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Star } from "lucide-react";
+import Autoplay from "embla-carousel-autoplay";
 
 const reviews = [
   {
@@ -46,6 +54,42 @@ const reviews = [
       "Good value for money and excellent arrangements. Would love to book again.",
     date: "2025-09-18",
   },
+  {
+    id: 5,
+    name: "James Smith",
+    avatar: "https://i.pravatar.cc/150?img=40",
+    rating: 5,
+    content:
+      "The Rangamati boat tour was breathtaking! Tour Matrix took care of every detail perfectly.",
+    date: "2025-09-20",
+  },
+  {
+    id: 6,
+    name: "Ayesha Rahman",
+    avatar: "https://i.pravatar.cc/150?img=15",
+    rating: 4,
+    content:
+      "Loved the Bandarban hill tracks trip! The guide was very knowledgeable and helpful.",
+    date: "2025-09-22",
+  },
+  {
+    id: 7,
+    name: "Michael Brown",
+    avatar: "https://i.pravatar.cc/150?img=48",
+    rating: 5,
+    content:
+      "A truly memorable trip to Sylhet waterfalls. I would definitely book with Tour Matrix again!",
+    date: "2025-09-25",
+  },
+  {
+    id: 8,
+    name: "Fatima Noor",
+    avatar: "https://i.pravatar.cc/150?img=27",
+    rating: 5,
+    content:
+      "Everything was smooth and enjoyable during our Saint Martin’s Island vacation. Highly satisfied!",
+    date: "2025-09-28",
+  },
 ];
 
 function StarRating({ rating }: { rating: number }) {
@@ -64,6 +108,8 @@ function StarRating({ rating }: { rating: number }) {
 }
 
 export default function ReviewSection() {
+  const autoplay = useRef(Autoplay({ delay: 3000, stopOnInteraction: true }));
+
   return (
     <section className="py-16 lg:py-24">
       <div className="container mx-auto px-4">
@@ -79,9 +125,11 @@ export default function ReviewSection() {
         </div>
 
         <Carousel
-          opts={{ align: "start" }}
+          opts={{ align: "start", loop: true }}
+          plugins={[autoplay.current]}
           className="w-full max-w-6xl mx-auto relative"
         >
+          {/* Controls */}
           <div className="hidden sm:block">
             <CarouselPrevious />
             <CarouselNext />
@@ -91,7 +139,7 @@ export default function ReviewSection() {
             {reviews.map((review) => (
               <CarouselItem
                 key={review.id}
-                className="basis-full sm:basis-1/2 lg:basis-1/3 px-2 py-2"
+                className="basis-full sm:basis-1/2 lg:basis-1/3 py-2"
               >
                 <Card className="h-full shadow-md rounded-2xl border hover:shadow-lg hover:scale-[1.02] transition-transform duration-200">
                   <CardHeader className="flex flex-row items-center gap-3">
@@ -110,10 +158,10 @@ export default function ReviewSection() {
                     <p className="text-gray-700 italic leading-relaxed">
                       “{review.content}”
                     </p>
-                    <p className="text-xs text-gray-400 mt-3">
-                      {new Date(review.date).toDateString()}
-                    </p>
                   </CardContent>
+                  <CardFooter className="text-xs text-gray-400 mt-auto">
+                    {new Date(review.date).toDateString()}
+                  </CardFooter>
                 </Card>
               </CarouselItem>
             ))}
