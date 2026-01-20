@@ -96,13 +96,43 @@ export default function LoginForm({
       <Card className="overflow-hidden p-0">
         <CardContent className="grid p-0 md:grid-cols-2">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onsubmit)} className="p-6 md:p-8">
-              <div className="flex flex-col gap-6">
+            <form onSubmit={form.handleSubmit(onsubmit)} className="p-4 md:p-6 max-h-[90vh] overflow-y-auto">
+              <div className="flex flex-col gap-4">
                 <div className="flex flex-col items-center text-center">
                   <h1 className="text-2xl font-bold">Login to your account</h1>
                 </div>
 
-                <div className="grid gap-3">
+                <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
+                  <span className="relative z-10 bg-card px-2 text-muted-foreground">
+                    Demo Account
+                  </span>
+                </div>
+                <div className="flex justify-center items-center gap-4">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-1/2 border-primary/20 hover:border-primary/50 hover:bg-primary/5 transition-all duration-300"
+                    onClick={() => {
+                      form.setValue("email", "super@gmail.com");
+                      form.setValue("password", "12345678");
+                    }}
+                  >
+                    Admin
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-1/2 border-primary/20 hover:border-primary/50 hover:bg-primary/5 transition-all duration-300"
+                    onClick={() => {
+                      form.setValue("email", "imam.hossain0321@gmail.com");
+                      form.setValue("password", "12345678");
+                    }}
+                  >
+                    User
+                  </Button>
+                </div>
+
+                <div className="grid gap-2">
                   <FormField
                     control={form.control}
                     name="email"
@@ -125,7 +155,7 @@ export default function LoginForm({
                   />
                 </div>
 
-                <div className="grid gap-3">
+                <div className="grid gap-2">
                   <FormField
                     control={form.control}
                     name="password"
@@ -156,17 +186,15 @@ export default function LoginForm({
                   Login
                 </Button>
 
-                <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
-                  <span className="bg-card text-muted-foreground relative z-10 px-2">
+                <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
+                  <span className="relative z-10 bg-card px-2 text-muted-foreground">
                     Or continue with
                   </span>
                 </div>
 
                 <Button
                   onClick={() =>
-                    (window.location.href = `${
-                      config.baseUrl
-                    }/auth/google?redirect=${encodeURIComponent(from)}`)
+                    (window.location.href = `${config.baseUrl}/auth/google?redirect=${encodeURIComponent(from)}`)
                   }
                   variant="outline"
                   type="button"
