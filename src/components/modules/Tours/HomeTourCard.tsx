@@ -23,9 +23,14 @@ export default function HomeTourCard({ tour }: TourCardProps) {
       <CardHeader className="p-0 relative">
         <div>
           <img
-            src={tour?.images?.[0]}
+            src={
+              tour?.images?.[0]?.includes("cloudinary.com")
+                ? tour.images[0].replace("/upload/", "/upload/w_600,f_auto,q_auto/")
+                : tour?.images?.[0]
+            }
             alt={tour?.title}
             className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300"
+            loading="lazy"
           />
         </div>
         {future && (

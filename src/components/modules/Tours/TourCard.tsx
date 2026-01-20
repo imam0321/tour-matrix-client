@@ -18,11 +18,16 @@ export default function TourCard({ tour }: TourCardProps) {
       className="group p-[-2em] flex flex-col md:flex-row overflow-hidden rounded-2xl shadow-md hover:shadow-lg transition-all"
     >
       {/* Image Section */}
-      <div className="relative md:w-1/3 h-48 md:h-auto">
+      <div className="relative md:w-1/3 h-48 md:h-auto overflow-hidden">
         <img
-          src={tour.images[0]}
+          src={
+            tour?.images?.[0]?.includes("cloudinary.com")
+              ? tour.images[0].replace("/upload/", "/upload/w_800,f_auto,q_auto/")
+              : tour?.images?.[0]
+          }
           alt={tour.title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          loading="lazy"
         />
         {future && (
           <Badge className="absolute top-3 left-3 bg-chart-2 text-white border-0">

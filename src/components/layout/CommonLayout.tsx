@@ -10,7 +10,7 @@ export default function CommonLayout({ children }: IProps) {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      <main className="grow-1">{children}</main>
+      <main className="grow-1 animate-fade-in">{children}</main>
       <Footer />
     </div>
   );

@@ -59,7 +59,11 @@ export default function TourDetailHero({
         {images.map((img, idx) => (
           <img
             key={idx}
-            src={img}
+            src={
+              img?.includes("cloudinary.com")
+                ? img.replace("/upload/", "/upload/w_1600,f_auto,q_auto/")
+                : img
+            }
             alt={title}
             loading="lazy"
             className="w-full h-full object-cover flex-shrink-0 filter contrast-125 brightness-90"

@@ -1,5 +1,4 @@
 import App from "@/App";
-import Verify from "@/pages/Verify";
 import { lazy } from "react";
 import { generateRoutes } from "@/utils/generateRoutes";
 import { createBrowserRouter, Navigate } from "react-router";
@@ -8,10 +7,13 @@ import { userSidebarItems } from "./userSidebarItems";
 import { withAuth } from "@/utils/withAuth";
 import { role } from "@/constants/role";
 import type { TRole } from "@/types/auth.type";
-import HomePage from "@/pages/HomePage";
-import ReviewSection from "@/components/modules/Home/ReviewSection";
-import NotFoundPage from "@/pages/NotFoundPage";
-import Unauthorized from "@/pages/Unauthorized";
+const Verify = lazy(() => import("@/pages/Verify"));
+const HomePage = lazy(() => import("@/pages/HomePage"));
+const ReviewSection = lazy(
+  () => import("@/components/modules/Home/ReviewSection")
+);
+const NotFoundPage = lazy(() => import("@/pages/NotFoundPage"));
+const Unauthorized = lazy(() => import("@/pages/Unauthorized"));
 const About = lazy(() => import("@/pages/About"));
 const Login = lazy(() => import("@/pages/Login"));
 const Register = lazy(() => import("@/pages/Register"));
