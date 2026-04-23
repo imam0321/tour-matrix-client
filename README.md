@@ -112,13 +112,6 @@ Backend runs on http://localhost:5000
 
 ---
 
-| Role        | Email                                                    | Password |
-| ----------- | -------------------------------------------------------  | -------- |
-| User        | [imam.hossain0321@gmail.com](imam.hossain0321@gmail.com) | 12345678 |
-| Super Admin | [super@gmail.com](mailto:super@gmail.com)                | 12345678 |
-
----
-
 # 🚀 Upcoming Features (Future Work)
 
 ## 🧭 Guide Dashboard
